@@ -76,7 +76,6 @@ export function InquiryDrawer({
   const total = car.daily_price_eur * days
 
   const onSubmit = async (data: FormData) => {
-    console.log('[InquiryDrawer] onSubmit called', data)
     setSubmitting(true)
     setErrorMsg('')
 
