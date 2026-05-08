@@ -10,7 +10,7 @@ export function Logo({ className, size = 'md' }: LogoProps) {
   return (
     <Link
       href="/"
-      className={cn('flex flex-col leading-none tracking-widest', className)}
+      className={cn('flex flex-col gap-0.5 leading-none tracking-widest', className)}
       aria-label="CostaSol Car Rent — Home"
     >
       <span

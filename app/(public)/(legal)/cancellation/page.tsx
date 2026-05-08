@@ -7,10 +7,9 @@ export default function CancellationPage() {
       <h1 className="font-display text-4xl font-light text-white mb-8">Cancellation Policy</h1>
       <div className="font-sans text-sm leading-relaxed text-muted space-y-4">
         <p>
-          Cancellation policy is communicated and agreed at the time of booking confirmation.
-        </p>
-        <p className="text-warning text-xs border border-warning/20 rounded-sm bg-warning/5 px-3 py-2">
-          PLACEHOLDER: Insert full cancellation terms provided by gestor — see PLACEHOLDERS.md
+          Our cancellation policy is communicated and agreed at the time of booking confirmation.
+          To cancel or modify a reservation, please contact us directly via WhatsApp or email
+          as early as possible.
         </p>
       </div>
     </>

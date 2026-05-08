@@ -5,27 +5,27 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 const faqs = [
   {
     q: 'How does the booking process work?',
-    a: 'Submit a request through the site or WhatsApp with your preferred dates and car. We confirm personally within the hour — you will receive an email and a WhatsApp message with full details. Payment and paperwork happen at pickup.',
+    a: 'Submit a request through the site or WhatsApp. We confirm personally, usually within the hour during business hours. We deliver the car to your hotel — payment and documents at pickup.',
   },
   {
     q: 'When and how do I pay?',
-    a: 'Payment is made in person at pickup. We accept credit card (Stripe Terminal) and bank transfer. There is no online payment on this site — luxury rental is a relationship business, not a checkout.',
+    a: 'Payment is made in person at pickup by card or bank transfer. We do not charge your card online. A refundable deposit is also held at pickup and returned when the car comes back in good condition.',
   },
   {
     q: 'Is a deposit required?',
-    a: 'Yes. A refundable security deposit is held at pickup. It is returned the same day the vehicle comes back in good condition. The exact amount depends on the car and is shown on the listing.',
+    a: 'Yes. A refundable security deposit is held at pickup. The amount depends on the vehicle. It is returned in full on the same day the car is returned undamaged.',
   },
   {
     q: 'What is included in the daily rate?',
-    a: 'Each car includes a daily mileage allowance (listed on the car page), fully comprehensive insurance, and concierge delivery within 25 km of Marbella. Additional mileage is charged at the rate shown on the listing.',
+    a: 'Comprehensive insurance, unlimited mileage within Spain, 24/7 roadside assistance, and delivery and collection within 25km of Marbella. Nothing hidden.',
   },
   {
     q: 'What are the age and license requirements?',
-    a: 'Minimum driver age is 25. A full driving license held for at least 2 years is required. Both license and passport must be presented at pickup for document verification.',
+    a: 'Drivers must be at least 25 years old and hold a full driving licence issued at least 2 years ago. International licences are accepted.',
   },
   {
     q: 'What is the cancellation policy?',
-    a: 'Cancellation terms are agreed personally at confirmation. We handle each situation on its merits. For full details, see our cancellation policy page.',
+    a: 'Cancellations must be made by contacting us directly via WhatsApp or email. Our cancellation policy is communicated at the time of booking confirmation.',
   },
 ]
 

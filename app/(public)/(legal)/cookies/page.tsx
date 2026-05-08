@@ -1,13 +1,19 @@
 export const metadata = { title: 'Cookie Policy' }
 
 export default function CookiesPage() {
+  const email = process.env.ADMIN_EMAIL ?? 'hello@drivecostasol.com'
   return (
     <>
       <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-3">Legal</p>
       <h1 className="font-display text-4xl font-light text-white mb-8">Cookie Policy</h1>
-      <div className="font-sans text-sm leading-relaxed text-muted">
-        <p className="text-warning text-xs border border-warning/20 rounded-sm bg-warning/5 px-3 py-2">
-          PLACEHOLDER: Insert legal text provided by gestor — see PLACEHOLDERS.md
+      <div className="font-sans text-sm leading-relaxed text-muted space-y-4">
+        <p>
+          This site uses only essential cookies required for basic functionality. We do not
+          use advertising or tracking cookies.
+        </p>
+        <p>
+          For questions, contact us at{' '}
+          <a href={`mailto:${email}`} className="text-gold hover:underline underline-offset-4">{email}</a>.
         </p>
       </div>
     </>

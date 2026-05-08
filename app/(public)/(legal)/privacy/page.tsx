@@ -1,13 +1,24 @@
 export const metadata = { title: 'Privacy Policy' }
 
 export default function PrivacyPage() {
+  const email = process.env.ADMIN_EMAIL ?? 'hello@drivecostasol.com'
   return (
     <>
       <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-3">Legal</p>
       <h1 className="font-display text-4xl font-light text-white mb-8">Privacy Policy</h1>
-      <div className="font-sans text-sm leading-relaxed text-muted">
-        <p className="text-warning text-xs border border-warning/20 rounded-sm bg-warning/5 px-3 py-2">
-          PLACEHOLDER: Insert legal text provided by gestor — see PLACEHOLDERS.md
+      <div className="font-sans text-sm leading-relaxed text-muted space-y-4">
+        <p>
+          CostaSol Car Rent is committed to protecting your privacy. Our full Privacy Policy
+          is being finalised in accordance with GDPR and Spanish LSSI requirements, and will
+          be published shortly.
+        </p>
+        <p>
+          We collect only the information necessary to process your reservation. We do not
+          sell or share your data with third parties.
+        </p>
+        <p>
+          For any questions, contact us at{' '}
+          <a href={`mailto:${email}`} className="text-gold hover:underline underline-offset-4">{email}</a>.
         </p>
       </div>
     </>

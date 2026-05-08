@@ -142,7 +142,7 @@ export default async function HomePage() {
             {[
               { step: '01', title: 'Browse', desc: 'Explore the fleet. Select dates and location. No account needed.' },
               { step: '02', title: 'Request', desc: 'Submit your inquiry through the site or WhatsApp. Takes 60 seconds.' },
-              { step: '03', title: 'Personal confirmation', desc: 'We confirm within the hour, personally. You will hear from us directly.' },
+              { step: '03', title: 'Personal confirmation', desc: 'We confirm personally, usually within the hour during business hours. You will always hear from us before your pickup.' },
               { step: '04', title: 'Drive', desc: 'We deliver the car to your hotel. Payment and paperwork at pickup.' },
             ].map(({ step, title, desc }) => (
               <div key={step} className="flex flex-col gap-4">

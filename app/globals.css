@@ -73,6 +73,24 @@ html {
   50% { opacity: 1; }
 }
 
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+.animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
+}
+
 .animate-fade-up {
   animation: fadeUp 700ms ease-out forwards;
 }
@@ -84,4 +102,12 @@ html {
 /* Tabular nums for prices */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Hide scrollbar while preserving scroll behaviour */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
