@@ -10,7 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const PICKUP_LOCATIONS = ['Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona']
+const PICKUP_LOCATIONS = [
+  'Alicante', 'Almeria', 'Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona',
+  'San Juan de los Terreros',
+]
 const CATEGORIES = ['sport', 'suv', 'sedan', 'convertible', 'luxury']
 
 interface FleetFiltersProps {

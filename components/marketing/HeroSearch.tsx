@@ -10,10 +10,8 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const PICKUP_LOCATIONS = [
-  'Marbella',
-  'Puerto Banús',
-  'Málaga Airport',
-  'Estepona',
+  'Alicante', 'Almeria', 'Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona',
+  'San Juan de los Terreros',
 ]
 
 interface HeroSearchProps {

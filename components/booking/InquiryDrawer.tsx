@@ -28,7 +28,10 @@ const COUNTRIES = [
   'Qatar', 'United States', 'Other',
 ]
 
-const PICKUP_LOCATIONS = ['Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona']
+const PICKUP_LOCATIONS = [
+  'Alicante', 'Almeria', 'Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona',
+  'San Juan de los Terreros',
+]
 
 const schema = z.object({
   full_name:          z.string().min(2, 'Full name required'),

@@ -1,7 +1,7 @@
 export const metadata = { title: 'Terms & Conditions' }
 
 export default function TermsPage() {
-  const email = process.env.ADMIN_EMAIL ?? 'hello@drivecostasol.com'
+  const email = process.env.ADMIN_EMAIL ?? 'rent@drivecostasol.com'
   return (
     <>
       <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-3">Legal</p>

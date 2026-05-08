@@ -12,7 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatPriceDecimals } from '@/lib/formatters'
 import { AlertTriangle } from 'lucide-react'
 
-const PICKUP_LOCATIONS = ['Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona']
+const PICKUP_LOCATIONS = [
+  'Alicante', 'Almeria', 'Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona',
+  'San Juan de los Terreros',
+]
 const PICKUP_TIMES = Array.from({ length: 29 }, (_, i) => {
   const hour = Math.floor(i / 2) + 8
   const min = (i % 2) * 30

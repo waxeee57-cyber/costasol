@@ -6,14 +6,17 @@ export const metadata = {
 }
 
 const PICKUP_LOCATIONS = [
-  { name: 'Marbella', note: 'Free delivery within 25 km' },
+  { name: 'Alicante', note: 'Free delivery' },
+  { name: 'Almeria', note: 'Free delivery' },
+  { name: 'Marbella', note: 'Free delivery' },
   { name: 'Puerto Banús', note: 'Free delivery' },
   { name: 'Málaga Airport', note: 'Free delivery' },
   { name: 'Estepona', note: 'Free delivery' },
+  { name: 'San Juan de los Terreros', note: 'Free delivery within 25 km' },
 ]
 
 export default function ContactPage() {
-  const email = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? 'hello@costasol.com'
+  const email = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? 'rent@drivecostasol.com'
   const phone = process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? ''
   const wa = process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP ?? ''
 

@@ -25,10 +25,10 @@ export function Footer() {
           <div className="flex flex-col gap-3">
             <p className="text-xs font-sans uppercase tracking-[0.15em] text-gold">Contact</p>
             <a
-              href="mailto:hello@drivecostasol.com"
+              href="mailto:rent@drivecostasol.com"
               className="text-sm font-sans text-muted hover:text-white transition-colors"
             >
-              hello@drivecostasol.com
+              rent@drivecostasol.com
             </a>
             {process.env.NEXT_PUBLIC_BUSINESS_PHONE && (
               <a

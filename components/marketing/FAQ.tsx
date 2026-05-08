@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     q: 'What is included in the daily rate?',
-    a: 'Comprehensive insurance, unlimited mileage within Spain, 24/7 roadside assistance, and delivery and collection within 25km of Marbella. Nothing hidden.',
+    a: 'Comprehensive insurance, unlimited mileage within Spain, 24/7 roadside assistance, and delivery and collection within 25km of San Juan de los Terreros. Nothing hidden.',
   },
   {
     q: 'What are the age and license requirements?',

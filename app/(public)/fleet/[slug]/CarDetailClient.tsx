@@ -16,7 +16,10 @@ import { formatPrice } from '@/lib/formatters'
 import { buildCarInquiryLink } from '@/lib/whatsapp'
 import { cn } from '@/lib/utils'
 
-const PICKUP_LOCATIONS = ['Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona']
+const PICKUP_LOCATIONS = [
+  'Alicante', 'Almeria', 'Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona',
+  'San Juan de los Terreros',
+]
 
 interface Car {
   id: string
