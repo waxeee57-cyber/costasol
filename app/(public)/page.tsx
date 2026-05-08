@@ -37,14 +37,14 @@ export default async function HomePage() {
         {/* Background image */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1740271002636-e87b490795ac?w=2400&q=80"
-            alt="Porsche on a coastal highway at golden hour"
+            src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=2400&q=80"
+            alt="Dramatic cinematic luxury car shot"
             fill
-            className="object-cover opacity-50"
+            className="object-cover object-center"
             priority
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/80" />
+          <div className="absolute inset-0 bg-black/55" />
         </div>
 
         {/* Content */}
