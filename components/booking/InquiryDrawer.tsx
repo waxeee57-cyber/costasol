@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { X, MessageCircle } from 'lucide-react'
+import { X, MessageCircle, MapPin } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { CostBreakdown } from './CostBreakdown'
-import { formatDate, formatPriceDecimals } from '@/lib/formatters'
+import { formatDate } from '@/lib/formatters'
 import { buildWhatsAppLink } from '@/lib/whatsapp'
 import { cn } from '@/lib/utils'
 
@@ -28,14 +28,22 @@ const COUNTRIES = [
   'Qatar', 'United States', 'Other',
 ]
 
+const PICKUP_LOCATIONS = ['Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona']
+
 const schema = z.object({
-  full_name: z.string().min(2, 'Full name required'),
-  email: z.string().email('Valid email required'),
-  phone: z.string().min(5, 'Phone number required'),
-  country: z.string().min(1, 'Country required'),
-  pickup_time: z.string().min(1, 'Pickup time required'),
-  message: z.string().optional(),
-})
+  full_name:          z.string().min(2, 'Full name required'),
+  email:              z.string().email('Valid email required'),
+  phone:              z.string().min(5, 'Phone number required'),
+  country:            z.string().min(1, 'Country required'),
+  pickup_location:    z.string().min(1, 'Pickup location required'),
+  pickup_time:        z.string().min(1, 'Pickup time required'),
+  message:            z.string().optional(),
+  transfer_requested: z.boolean(),
+  transfer_address:   z.string().optional(),
+}).refine(
+  (d) => !d.transfer_requested || (d.transfer_address ?? '').trim().length > 0,
+  { message: 'Delivery address required', path: ['transfer_address'] }
+)
 
 type FormData = z.infer<typeof schema>
 
@@ -69,11 +77,17 @@ export function InquiryDrawer({
   const [errorCount, setErrorCount] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>({
+  const defaultPickup = PICKUP_LOCATIONS.includes(pickupLocation) ? pickupLocation : PICKUP_LOCATIONS[0]
+
+  const { register, handleSubmit, control, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      pickup_location: defaultPickup,
+      transfer_requested: false,
+    },
   })
 
-  const total = car.daily_price_eur * days
+  const transferRequested = watch('transfer_requested')
 
   const onSubmit = async (data: FormData) => {
     setSubmitting(true)
@@ -88,7 +102,6 @@ export function InquiryDrawer({
           car_slug: car.slug,
           start_date: startDate,
           end_date: endDate,
-          pickup_location: pickupLocation,
         }),
       })
 
@@ -132,7 +145,9 @@ export function InquiryDrawer({
               Request {car.brand} {car.model}
             </h2>
             <p className="mt-0.5 font-sans text-xs text-muted">
-              {formatDate(startDate)} → {formatDate(endDate)} · {pickupLocation}
+              {formatDate(startDate)} → {formatDate(endDate)}
+              {' · '}
+              {transferRequested ? 'Custom delivery' : pickupLocation}
             </p>
           </div>
           <button
@@ -148,16 +163,12 @@ export function InquiryDrawer({
           {/* Cost reference */}
           <div className="space-y-2">
             <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Cost reference</p>
-            <div className="space-y-1.5 text-sm font-sans">
-              <div className="flex justify-between">
-                <span className="text-muted">Estimated total</span>
-                <span className="font-medium text-gold tabular-nums">{formatPriceDecimals(total)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted">Refundable deposit at pickup</span>
-                <span className="font-medium text-white tabular-nums">{formatPriceDecimals(car.deposit_eur)}</span>
-              </div>
-            </div>
+            <CostBreakdown
+              dailyRate={car.daily_price_eur}
+              days={days}
+              depositEur={car.deposit_eur}
+              transferRequested={transferRequested}
+            />
           </div>
 
           {/* Form */}
@@ -220,6 +231,84 @@ export function InquiryDrawer({
               />
               {errors.country && (
                 <p className="text-xs font-sans text-danger">{errors.country.message}</p>
+              )}
+            </div>
+
+            {/* Pickup location — hidden when transfer is on */}
+            {!transferRequested && (
+              <div className="space-y-1.5">
+                <Label>Pickup location</Label>
+                <Controller
+                  name="pickup_location"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value ?? ''} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <span className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-gold shrink-0" />
+                          <SelectValue placeholder="Select location" />
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PICKUP_LOCATIONS.map((loc) => (
+                          <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.pickup_location && (
+                  <p className="text-xs font-sans text-danger">{errors.pickup_location.message}</p>
+                )}
+              </div>
+            )}
+
+            {/* Transfer toggle */}
+            <div className="rounded-md border border-border bg-black/30 px-4 py-3 space-y-3">
+              <Controller
+                name="transfer_requested"
+                control={control}
+                render={({ field }) => (
+                  <label className="flex items-center justify-between cursor-pointer select-none gap-4">
+                    <div>
+                      <p className="font-sans text-sm text-white">Deliver to a custom address</p>
+                      <p className="font-sans text-xs text-muted mt-0.5">
+                        An additional transfer fee applies. We will confirm the amount before your
+                        reservation is finalised.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={field.value}
+                      onClick={() => field.onChange(!field.value)}
+                      className={cn(
+                        'relative shrink-0 h-6 w-11 rounded-full transition-colors duration-200',
+                        field.value ? 'bg-gold' : 'bg-border'
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform duration-200',
+                          field.value ? 'translate-x-5' : 'translate-x-0'
+                        )}
+                      />
+                    </button>
+                  </label>
+                )}
+              />
+
+              {/* Custom address input — shown when transfer is on */}
+              {transferRequested && (
+                <div className="space-y-1.5">
+                  <Input
+                    placeholder="Enter full delivery address (hotel name, villa, area...)"
+                    {...register('transfer_address')}
+                  />
+                  {errors.transfer_address && (
+                    <p className="text-xs font-sans text-danger">{errors.transfer_address.message}</p>
+                  )}
+                </div>
               )}
             </div>
 

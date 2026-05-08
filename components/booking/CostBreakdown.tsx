@@ -7,9 +7,10 @@ interface CostBreakdownProps {
   days: number
   depositEur: number
   compact?: boolean
+  transferRequested?: boolean
 }
 
-export function CostBreakdown({ dailyRate, days, depositEur, compact }: CostBreakdownProps) {
+export function CostBreakdown({ dailyRate, days, depositEur, compact, transferRequested }: CostBreakdownProps) {
   const total = dailyRate * days
 
   if (compact) {
@@ -35,6 +36,25 @@ export function CostBreakdown({ dailyRate, days, depositEur, compact }: CostBrea
           </span>
         </div>
 
+        {transferRequested && (
+          <div className="flex items-center justify-between">
+            <span className="flex items-center gap-1.5 font-sans text-sm text-muted">
+              Custom delivery
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="cursor-help">
+                    <Info className="h-3.5 w-3.5 text-muted/60" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  The transfer fee will be confirmed by the owner before your reservation is finalised.
+                </TooltipContent>
+              </Tooltip>
+            </span>
+            <span className="font-sans text-sm italic text-muted">TBC</span>
+          </div>
+        )}
+
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1.5 font-sans text-sm text-muted">
             Refundable deposit
@@ -59,6 +79,9 @@ export function CostBreakdown({ dailyRate, days, depositEur, compact }: CostBrea
           <span className="font-sans text-sm font-medium text-white">Payment at pickup</span>
           <span className="font-sans text-base font-medium text-gold tabular-nums">
             {formatPriceDecimals(total)}
+            {transferRequested && (
+              <span className="font-sans text-xs font-normal text-muted"> + transfer fee</span>
+            )}
           </span>
         </div>
       </div>

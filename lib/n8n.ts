@@ -12,6 +12,8 @@ export interface InquiryPayload {
   estimated_total: string
   deposit: string
   status_page_url: string
+  transfer_requested?: boolean
+  transfer_address?: string
 }
 
 export async function notifyInquiry(payload: InquiryPayload): Promise<void> {

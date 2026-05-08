@@ -29,6 +29,9 @@ interface BookingRow {
   created_at: string
   updated_at: string
   status_history: Array<{ status: string; at: string; by: string }>
+  transfer_requested: boolean
+  transfer_address: string | null
+  transfer_fee_eur: number | null
   car: { brand: string; model: string; year: number; slug: string } | null
   customer: { full_name: string; email: string; phone: string | null; country: string | null } | null
 }
@@ -150,6 +153,11 @@ export function BookingsList({ bookings, counts, currentFilter, selectedId: init
                           {b.booking_code}
                         </span>
                         <StatusPill status={b.status} mode="admin" />
+                        {b.transfer_requested && (
+                          <span className="rounded-sm border border-gold/60 px-1.5 py-0.5 text-[9px] font-sans uppercase tracking-wider text-gold">
+                            Transfer
+                          </span>
+                        )}
                         {b.source === 'manual' && (
                           <span className="rounded-sm bg-white/5 px-1.5 py-0.5 text-[9px] font-sans uppercase tracking-wider text-muted">
                             manual

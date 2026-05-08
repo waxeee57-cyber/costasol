@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
       pickup_location, dropoff_location,
       start_at, end_at, days, total_eur, deposit_eur,
       customer_message, created_at, updated_at,
+      transfer_requested, transfer_address, transfer_fee_eur,
       car_id,
       customer_id
     `)
@@ -57,6 +58,9 @@ export async function POST(req: NextRequest) {
     deposit_eur: booking.deposit_eur,
     customer_message: booking.customer_message,
     created_at: booking.created_at,
+    transfer_requested: booking.transfer_requested,
+    transfer_address: booking.transfer_address,
+    transfer_fee_eur: booking.transfer_fee_eur,
     customer: {
       full_name: customer.full_name,
     },

@@ -8,16 +8,18 @@ import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { z } from 'zod'
 
 const schema = z.object({
-  car_slug:         z.string(),
-  start_date:       z.string(),
-  end_date:         z.string(),
-  pickup_location:  z.string(),
-  full_name:        z.string().min(2),
-  email:            z.string().email(),
-  phone:            z.string().min(5),
-  country:          z.string().min(1),
-  pickup_time:      z.string().min(1),
-  message:          z.string().optional(),
+  car_slug:           z.string(),
+  start_date:         z.string(),
+  end_date:           z.string(),
+  pickup_location:    z.string(),
+  full_name:          z.string().min(2),
+  email:              z.string().email(),
+  phone:              z.string().min(5),
+  country:            z.string().min(1),
+  pickup_time:        z.string().min(1),
+  message:            z.string().optional(),
+  transfer_requested: z.boolean().default(false),
+  transfer_address:   z.string().optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -27,7 +29,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request', details: parsed.error.issues }, { status: 400 })
   }
 
-  const { car_slug, start_date, end_date, pickup_location, full_name, email, phone, country, pickup_time, message } = parsed.data
+  const { car_slug, start_date, end_date, pickup_location, full_name, email, phone, country, pickup_time, message, transfer_requested, transfer_address } = parsed.data
 
   // Validate dates in Madrid TZ
   const startDate = parseISO(start_date)
@@ -98,7 +100,7 @@ export async function POST(req: NextRequest) {
         booking_code,
         car_id: car.id,
         customer_id: customer.id,
-        pickup_location,
+        pickup_location: transfer_requested ? 'Custom — see transfer address' : pickup_location,
         dropoff_location: pickup_location,
         start_at: startUtc,
         end_at: endUtc,
@@ -109,6 +111,8 @@ export async function POST(req: NextRequest) {
         status: 'inquiry',
         status_history: [{ status: 'inquiry', at: new Date().toISOString(), by: 'system' }],
         source: 'web',
+        transfer_requested,
+        transfer_address: transfer_requested ? (transfer_address ?? null) : null,
       })
       .select('id')
       .single()
@@ -141,10 +145,14 @@ export async function POST(req: NextRequest) {
     car_label: `${car.brand} ${car.model} ${car.year}`,
     dates_label: `${formatDate(startDate)} → ${formatDate(endDate)}`,
     days,
-    pickup_label: `${pickup_location} · ${pickup_time}`,
+    pickup_label: transfer_requested
+      ? `Custom delivery · ${pickup_time}`
+      : `${pickup_location} · ${pickup_time}`,
     estimated_total: formatPriceDecimals(total),
     deposit: formatPriceDecimals(car.deposit_eur),
     status_page_url: statusPageUrl,
+    transfer_requested,
+    transfer_address: transfer_requested ? (transfer_address ?? undefined) : undefined,
   }).catch((err) => console.warn('[inquiries/create] n8n notify failed', err))
 
   return NextResponse.json({ booking_code })

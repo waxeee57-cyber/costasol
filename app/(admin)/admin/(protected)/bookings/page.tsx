@@ -29,6 +29,9 @@ interface BookingRow {
   created_at: string
   updated_at: string
   status_history: Array<{ status: string; at: string; by: string }>
+  transfer_requested: boolean
+  transfer_address: string | null
+  transfer_fee_eur: number | null
   car: { brand: string; model: string; year: number; slug: string } | null
   customer: { full_name: string; email: string; phone: string | null; country: string | null } | null
 }
@@ -40,6 +43,7 @@ async function getBookings(filter?: string): Promise<BookingRow[]> {
       id, booking_code, status, pickup_location, start_at, end_at, days,
       total_eur, deposit_eur, customer_message, admin_notes, license_doc_url,
       id_doc_url, return_notes, source, created_at, updated_at, status_history,
+      transfer_requested, transfer_address, transfer_fee_eur,
       car:cars(brand, model, year, slug),
       customer:customers(full_name, email, phone, country)
     `)

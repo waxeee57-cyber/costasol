@@ -23,6 +23,9 @@ interface BookingData {
   customer_message?: string
   customer: { full_name: string }
   car: { brand: string; model: string; year: number; slug: string; photos: Array<{url: string; alt: string}> } | null
+  transfer_requested?: boolean
+  transfer_address?: string | null
+  transfer_fee_eur?: number | null
 }
 
 const STATUS_HEADLINES: Record<BookingStatus, (data: BookingData) => string> = {
@@ -216,6 +219,9 @@ export function BookingStatusClient({ code, emailParam }: BookingStatusClientPro
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.15em] text-muted mb-0.5">Pickup</p>
                     <p className="text-white">{booking.pickup_location}</p>
+                    {booking.transfer_requested && booking.transfer_address && (
+                      <p className="text-xs text-muted mt-0.5">{booking.transfer_address}</p>
+                    )}
                   </div>
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.15em] text-muted mb-0.5">Duration</p>
@@ -229,6 +235,16 @@ export function BookingStatusClient({ code, emailParam }: BookingStatusClientPro
                     <p className="text-[10px] uppercase tracking-[0.15em] text-muted mb-0.5">Deposit at pickup</p>
                     <p className="text-white tabular-nums">{formatPriceDecimals(booking.deposit_eur)}</p>
                   </div>
+                  {booking.transfer_requested && (
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted mb-0.5">Custom delivery fee</p>
+                      <p className="text-white tabular-nums">
+                        {booking.transfer_fee_eur != null
+                          ? formatPriceDecimals(booking.transfer_fee_eur)
+                          : 'To be confirmed'}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

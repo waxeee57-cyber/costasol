@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Phone, Copy, Check, MessageCircle, AlertTriangle } from 'lucide-react'
+import { Phone, Copy, Check, MessageCircle, AlertTriangle, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { formatDateRange, formatDateTime, formatPriceDecimals, formatTime } from '@/lib/formatters'
@@ -28,6 +28,9 @@ interface BookingRow {
   source: string
   created_at: string
   status_history: Array<{ status: string; at: string; by: string }>
+  transfer_requested: boolean
+  transfer_address: string | null
+  transfer_fee_eur: number | null
   car: { brand: string; model: string; year: number; slug: string } | null
   customer: { full_name: string; email: string; phone: string | null; country: string | null } | null
 }
@@ -74,6 +77,9 @@ export function BookingDetail({ booking: b, onStatusChange }: BookingDetailProps
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [uploadingDoc, setUploadingDoc] = useState<'license' | 'id' | null>(null)
   const [docUrls, setDocUrls] = useState({ license: b.license_doc_url, id: b.id_doc_url })
+  const [transferFee, setTransferFee] = useState(b.transfer_fee_eur !== null ? String(b.transfer_fee_eur) : '')
+  const [savingFee, setSavingFee] = useState(false)
+  const [feeSaved, setFeeSaved] = useState(b.transfer_fee_eur !== null)
 
   const waLink = buildBookingLink({ customerName: b.customer?.full_name ?? '', bookingCode: b.booking_code })
 
@@ -129,6 +135,22 @@ export function BookingDetail({ booking: b, onStatusChange }: BookingDetailProps
       setError('Upload failed. Please try again.')
     } finally {
       setUploadingDoc(null)
+    }
+  }
+
+  const saveTransferFee = async () => {
+    const fee = parseFloat(transferFee)
+    if (isNaN(fee) || fee < 0) return
+    setSavingFee(true)
+    try {
+      const res = await fetch(`/api/admin/bookings/${b.id}/transfer-fee`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transfer_fee_eur: fee }),
+      })
+      if (res.ok) setFeeSaved(true)
+    } finally {
+      setSavingFee(false)
     }
   }
 
@@ -285,6 +307,51 @@ export function BookingDetail({ booking: b, onStatusChange }: BookingDetailProps
           )}
         </div>
       </Section>
+
+      {/* Section 2b: Transfer Request */}
+      {b.transfer_requested && (
+        <Section title="Transfer Request">
+          <div className="space-y-4">
+            <div>
+              <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted mb-0.5">Delivery address</p>
+              <p className="font-sans text-sm text-white">{b.transfer_address}</p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Transfer fee</p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="9999"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={transferFee}
+                  onChange={(e) => { setTransferFee(e.target.value); setFeeSaved(false) }}
+                  className="w-28 rounded-md border border-border bg-black/40 px-3 py-2 font-sans text-sm text-white placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-gold"
+                />
+                <span className="font-sans text-sm text-muted">EUR</span>
+                <button
+                  onClick={saveTransferFee}
+                  disabled={savingFee}
+                  className="rounded-md border border-gold/40 px-3 py-2 text-xs font-sans uppercase tracking-[0.12em] text-gold hover:bg-gold hover:text-black transition-colors disabled:opacity-50"
+                >
+                  {savingFee ? 'Saving...' : 'Save fee'}
+                </button>
+              </div>
+              {feeSaved && transferFee && (
+                <p className="font-sans text-xs text-success">
+                  Transfer fee: €{parseFloat(transferFee).toFixed(2)} (saved)
+                </p>
+              )}
+              <p className="flex items-start gap-1.5 font-sans text-xs text-muted">
+                <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                Communicate the fee to the customer via WhatsApp before confirming the booking.
+              </p>
+            </div>
+          </div>
+        </Section>
+      )}
 
       {/* Section 3: Pickup Workflow (confirmed only) */}
       {b.status === 'confirmed' && (
