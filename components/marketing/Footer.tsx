@@ -25,17 +25,19 @@ export function Footer() {
           <div className="flex flex-col gap-3">
             <p className="text-xs font-sans uppercase tracking-[0.15em] text-gold">Contact</p>
             <a
-              href={`mailto:${process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? 'hello@costasol.com'}`}
+              href={`mailto:${process.env.ADMIN_EMAIL ?? 'hello@costasol.com'}`}
               className="text-sm font-sans text-muted hover:text-white transition-colors"
             >
-              {process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? 'hello@costasol.com'}
+              {process.env.ADMIN_EMAIL ?? 'hello@costasol.com'}
             </a>
-            <a
-              href={`tel:${process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? ''}`}
-              className="text-sm font-sans text-muted hover:text-white transition-colors"
-            >
-              {process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? '{{ PHONE }}'}
-            </a>
+            {process.env.NEXT_PUBLIC_BUSINESS_PHONE && (
+              <a
+                href={`tel:${process.env.NEXT_PUBLIC_BUSINESS_PHONE}`}
+                className="text-sm font-sans text-muted hover:text-white transition-colors"
+              >
+                {process.env.NEXT_PUBLIC_BUSINESS_PHONE}
+              </a>
+            )}
           </div>
         </div>
 

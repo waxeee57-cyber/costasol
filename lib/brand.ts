@@ -13,7 +13,7 @@ export const brand = {
     textOnLight:  '#181818',
     success:      '#7A8F5A',
     warning:      '#C8A96B',
-    danger:       '#8B3A3A',
+    danger:       '#E05252',
     whatsapp:     '#25D366',
     border:       'rgba(200,169,107,0.15)',
   },
