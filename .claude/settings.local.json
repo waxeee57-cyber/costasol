@@ -15,7 +15,9 @@
       "Bash(git remote *)",
       "Bash(git push *)",
       "Bash(git config *)",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "WebSearch",
+      "WebFetch(domain:unsplash.com)"
     ]
   }
 }

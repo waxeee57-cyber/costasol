@@ -37,8 +37,8 @@ export default async function HomePage() {
         {/* Background image */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2400&q=80"
-            alt="Luxury car on the Costa del Sol"
+            src="https://images.unsplash.com/photo-1740271002636-e87b490795ac?w=2400&q=80"
+            alt="Porsche on a coastal highway at golden hour"
             fill
             className="object-cover opacity-50"
             priority
