@@ -1,0 +1,329 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { format, differenceInCalendarDays } from 'date-fns'
+import { type DateRange } from 'react-day-picker'
+import { Users, Zap, Fuel, Gauge, Clock, AlertTriangle, MessageCircle } from 'lucide-react'
+import { DateRangePicker } from '@/components/booking/DateRangePicker'
+import { CostBreakdown } from '@/components/booking/CostBreakdown'
+import { MobileStickyCTA } from '@/components/booking/MobileStickyCTA'
+import { InquiryDrawer } from '@/components/booking/InquiryDrawer'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { formatPrice } from '@/lib/formatters'
+import { buildCarInquiryLink } from '@/lib/whatsapp'
+import { cn } from '@/lib/utils'
+
+const PICKUP_LOCATIONS = ['Marbella', 'Puerto Banús', 'Málaga Airport', 'Estepona']
+
+interface Car {
+  id: string
+  slug: string
+  brand: string
+  model: string
+  year: number
+  category: string
+  daily_price_eur: number
+  deposit_eur: number
+  mileage_included_per_day: number
+  extra_km_price_eur: number
+  min_driver_age: number
+  min_license_years: number
+  transmission: string
+  fuel: string
+  seats: number
+  description: string
+  photos: Array<{ url: string; alt: string }>
+  features: string[]
+}
+
+interface CarDetailClientProps {
+  car: Car
+  initialStart?: string
+  initialEnd?: string
+  initialPickup?: string
+  initialAvailable: boolean
+}
+
+export function CarDetailClient({
+  car,
+  initialStart,
+  initialEnd,
+  initialPickup,
+  initialAvailable,
+}: CarDetailClientProps) {
+  const router = useRouter()
+
+  const [range, setRange] = useState<DateRange | undefined>(
+    initialStart && initialEnd
+      ? { from: new Date(initialStart), to: new Date(initialEnd) }
+      : undefined
+  )
+  const [pickup, setPickup] = useState(initialPickup ?? 'Marbella')
+  const [photoIdx, setPhotoIdx] = useState(0)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [isAvailable, setIsAvailable] = useState(initialAvailable)
+  const [checking, setChecking] = useState(false)
+
+  const days = range?.from && range?.to
+    ? differenceInCalendarDays(range.to, range.from)
+    : 0
+
+  const startStr = range?.from ? format(range.from, 'yyyy-MM-dd') : ''
+  const endStr = range?.to ? format(range.to, 'yyyy-MM-dd') : ''
+
+  const checkAvailability = useCallback(async (start: string, end: string) => {
+    setChecking(true)
+    try {
+      const res = await fetch(`/api/cars/${car.slug}/availability?start=${start}&end=${end}`)
+      const data = await res.json()
+      setIsAvailable(data.available)
+    } catch {
+      setIsAvailable(true)
+    } finally {
+      setChecking(false)
+    }
+  }, [car.slug])
+
+  const handleRangeChange = (r: DateRange | undefined) => {
+    setRange(r)
+    if (r?.from && r?.to) {
+      const s = format(r.from, 'yyyy-MM-dd')
+      const e = format(r.to, 'yyyy-MM-dd')
+      checkAvailability(s, e)
+      const params = new URLSearchParams({ start: s, end: e, pickup })
+      router.replace(`/fleet/${car.slug}?${params.toString()}`, { scroll: false })
+    }
+  }
+
+  const whatsappHref = buildCarInquiryLink({
+    carLabel: `${car.brand} ${car.model} ${car.year}`,
+    startDate: startStr,
+    endDate: endStr,
+    pickupLocation: pickup,
+    totalFormatted: days > 0 ? `€${car.daily_price_eur * days}` : 'TBD',
+  })
+
+  const photos = car.photos ?? []
+  const currentPhoto = photos[photoIdx]
+
+  const canReserve = days > 0 && isAvailable && !checking
+
+  return (
+    <>
+      <div className="min-h-screen bg-black pb-24 md:pb-0">
+        {/* Gallery */}
+        <div className="relative h-[50vh] min-h-[320px] max-h-[520px] bg-graphite">
+          {currentPhoto ? (
+            <Image
+              src={currentPhoto.url}
+              alt={currentPhoto.alt}
+              fill
+              className="object-cover"
+              priority
+              sizes="100vw"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-muted font-sans text-sm">No photo</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+          {/* Thumbnail strip */}
+          {photos.length > 1 && (
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4">
+              {photos.map((p, i) => (
+                <button
+                  key={i}
+                  onClick={() => setPhotoIdx(i)}
+                  className={cn(
+                    'h-12 w-16 overflow-hidden rounded-sm border-2 transition-all shrink-0',
+                    i === photoIdx ? 'border-gold' : 'border-transparent opacity-60 hover:opacity-100'
+                  )}
+                >
+                  <Image src={p.url} alt={p.alt} width={64} height={48} className="object-cover h-full w-full" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Main content */}
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_380px]">
+            {/* Left — info */}
+            <div className="space-y-10">
+              {/* Title */}
+              <div>
+                <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-2">{car.category}</p>
+                <h1 className="font-display text-5xl font-light text-white tracking-tight">
+                  {car.brand} {car.model}
+                </h1>
+                <p className="font-sans text-sm text-muted mt-1">{car.year}</p>
+              </div>
+
+              {/* Description */}
+              {car.description && (
+                <p className="font-sans text-base leading-relaxed text-muted max-w-2xl">
+                  {car.description}
+                </p>
+              )}
+
+              {/* Specs */}
+              <div>
+                <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-4">Specifications</p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {[
+                    { icon: Zap, label: 'Transmission', value: car.transmission },
+                    { icon: Fuel, label: 'Fuel', value: car.fuel },
+                    { icon: Users, label: 'Seats', value: String(car.seats) },
+                    { icon: Gauge, label: 'Daily mileage', value: `${car.mileage_included_per_day} km` },
+                    { icon: Clock, label: 'Min. age', value: `${car.min_driver_age} years` },
+                    { icon: Clock, label: 'Min. license', value: `${car.min_license_years} years` },
+                  ].map(({ icon: Icon, label, value }) => (
+                    <div key={label} className="rounded-md border border-border bg-graphite p-4">
+                      <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted mb-1">{label}</p>
+                      <p className="font-sans text-sm font-medium text-white">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Features */}
+              {car.features?.length > 0 && (
+                <div>
+                  <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-4">What's included</p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {car.features.map((f: string) => (
+                      <div key={f} className="flex items-center gap-2.5">
+                        <span className="h-1 w-1 rounded-full bg-gold shrink-0" />
+                        <span className="font-sans text-sm text-muted">{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right — sticky price block (desktop) */}
+            <div className="hidden lg:block">
+              <div className="sticky top-24 rounded-lg border border-border bg-graphite p-6 space-y-5">
+                {/* Price */}
+                <div>
+                  <p className="font-sans text-2xl font-medium text-gold">
+                    {formatPrice(car.daily_price_eur)}
+                    <span className="text-base font-normal text-muted ml-1">/ day</span>
+                  </p>
+                </div>
+
+                {/* Date picker */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Dates</label>
+                  <DateRangePicker
+                    value={range}
+                    onChange={handleRangeChange}
+                    placeholder="Select dates"
+                    maxDays={14}
+                  />
+                </div>
+
+                {/* Location */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Pickup location</label>
+                  <Select value={pickup} onValueChange={setPickup}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PICKUP_LOCATIONS.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Availability banner */}
+                {days > 0 && !isAvailable && (
+                  <div className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger/10 px-3 py-3">
+                    <AlertTriangle className="h-4 w-4 text-danger shrink-0 mt-0.5" />
+                    <p className="font-sans text-xs text-danger">
+                      Not available for these dates. Try different dates or message us on WhatsApp.
+                    </p>
+                  </div>
+                )}
+
+                {/* Cost breakdown */}
+                {days > 0 && isAvailable && (
+                  <CostBreakdown
+                    dailyRate={car.daily_price_eur}
+                    days={days}
+                    depositEur={car.deposit_eur}
+                  />
+                )}
+
+                {/* CTAs */}
+                <div className="flex gap-3">
+                  <Button
+                    variant="primary"
+                    className="flex-1"
+                    onClick={() => setDrawerOpen(true)}
+                    disabled={!canReserve}
+                  >
+                    {checking ? 'Checking...' : 'Request This Car'}
+                  </Button>
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      'flex h-12 items-center justify-center gap-2 rounded-md px-4',
+                      'bg-whatsapp text-white text-xs font-sans font-medium uppercase tracking-widest',
+                      'hover:opacity-90 transition-opacity shrink-0'
+                    )}
+                  >
+                    <MessageCircle className="h-4 w-4 fill-white stroke-none" />
+                    WhatsApp
+                  </a>
+                </div>
+
+                <p className="text-center text-[11px] font-sans text-muted">
+                  We confirm reservations personally. Payment in person at pickup.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile sticky CTA */}
+      <MobileStickyCTA
+        carLabel={`${car.brand} ${car.model}`}
+        dailyRate={car.daily_price_eur}
+        days={days || undefined}
+        whatsappHref={whatsappHref}
+        onReserve={() => setDrawerOpen(true)}
+        isAvailable={canReserve || days === 0}
+      />
+
+      {/* Inquiry drawer */}
+      {drawerOpen && days > 0 && (
+        <InquiryDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          car={{
+            slug: car.slug,
+            brand: car.brand,
+            model: car.model,
+            daily_price_eur: car.daily_price_eur,
+            deposit_eur: car.deposit_eur,
+          }}
+          startDate={startStr}
+          endDate={endStr}
+          days={days}
+          pickupLocation={pickup}
+        />
+      )}
+    </>
+  )
+}

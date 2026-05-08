@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New inquiry — {{booking_code}}</title>
+</head>
+<body style="margin:0;padding:0;background:#0F0F10;font-family:'Inter',Helvetica,Arial,sans-serif;color:#FFFFFF;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0F0F10;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+          <tr>
+            <td style="padding-bottom:24px;border-bottom:1px solid rgba(200,169,107,0.15);">
+              <p style="margin:0;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A96B;">
+                CostaSol — New Inquiry
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 0;">
+              <h1 style="margin:0 0 4px;font-family:Georgia,serif;font-size:28px;font-weight:300;color:#FFFFFF;">
+                {{car_label}}
+              </h1>
+              <p style="margin:0 0 24px;font-size:13px;color:#C8A96B;letter-spacing:0.05em;">
+                {{booking_code}}
+              </p>
+
+              <table width="100%" cellpadding="0" cellspacing="0"
+                style="background:#1B1B1D;border:1px solid rgba(200,169,107,0.15);border-radius:4px;margin-bottom:16px;">
+                <tr><td style="padding:20px;">
+                  <table width="100%" cellpadding="8" cellspacing="0">
+                    <tr>
+                      <td style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;width:120px;">Customer</td>
+                      <td style="font-size:14px;color:#FFFFFF;">{{customer_name}}</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Email</td>
+                      <td style="font-size:14px;"><a href="mailto:{{customer_email}}" style="color:#C8A96B;">{{customer_email}}</a></td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Phone</td>
+                      <td style="font-size:14px;"><a href="tel:{{customer_phone}}" style="color:#C8A96B;">{{customer_phone}}</a></td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Dates</td>
+                      <td style="font-size:14px;color:#FFFFFF;">{{dates_label}}</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Pickup</td>
+                      <td style="font-size:14px;color:#FFFFFF;">{{pickup_label}}</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Total</td>
+                      <td style="font-size:16px;font-weight:500;color:#C8A96B;">{{estimated_total}}</td>
+                    </tr>
+                    {{#if customer_message}}
+                    <tr>
+                      <td style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Message</td>
+                      <td style="font-size:14px;color:#B8B8B8;font-style:italic;">&ldquo;{{customer_message}}&rdquo;</td>
+                    </tr>
+                    {{/if}}
+                  </table>
+                </td></tr>
+              </table>
+
+              <p style="text-align:center;margin:0 0 16px;">
+                <a href="{{status_page_url}}"
+                  style="display:inline-block;background:#C8A96B;color:#0F0F10;text-decoration:none;padding:12px 28px;border-radius:4px;font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;">
+                  Open in Admin
+                </a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

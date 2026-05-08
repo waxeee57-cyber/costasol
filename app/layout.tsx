@@ -1,0 +1,44 @@
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { Cormorant_Garamond } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+})
+
+export const metadata: Metadata = {
+  title: {
+    default: 'CostaSol Car Rent — Luxury Car Rental Marbella',
+    template: '%s | CostaSol Car Rent',
+  },
+  description:
+    'Luxury car rental in Marbella and the Costa del Sol. Concierge service, hotel delivery, personally confirmed reservations.',
+  openGraph: {
+    siteName: 'CostaSol Car Rent',
+    locale: 'en_GB',
+    type: 'website',
+  },
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+      <body>
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  )
+}

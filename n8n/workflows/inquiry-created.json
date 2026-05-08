@@ -1,0 +1,117 @@
+{
+  "name": "CostaSol — Inquiry Created / Confirmed",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "costasol-inquiry",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "costasol-inquiry"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.event }}",
+              "value2": "inquiry"
+            }
+          ]
+        }
+      },
+      "id": "route-event",
+      "name": "Is Inquiry or Confirmed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.RESEND_FROM_EMAIL }}",
+        "toEmail": "={{ $json.body.customer_email }}",
+        "subject": "Your CostaSol request — {{ $json.body.booking_code }}",
+        "emailType": "html",
+        "message": "<!-- PLACEHOLDER: Replace with inquiry-customer.html content -->\n<p>Hi {{ $json.body.customer_name }},</p>\n<p>We have received your request for the {{ $json.body.car_label }} from {{ $json.body.dates_label }}.</p>\n<p>The owner will be in touch personally to confirm within the hour.</p>\n<p><strong>Estimated total:</strong> {{ $json.body.estimated_total }}<br><strong>Refundable deposit at pickup:</strong> {{ $json.body.deposit }}</p>\n<p><a href=\"{{ $json.body.status_page_url }}\">Track your reservation →</a></p>\n<p>— CostaSol Car Rent</p>"
+      },
+      "id": "email-customer-inquiry",
+      "name": "Email Customer (Inquiry)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.RESEND_FROM_EMAIL }}",
+        "toEmail": "={{ $env.ADMIN_EMAIL }}",
+        "subject": "New inquiry — {{ $json.body.booking_code }} — {{ $json.body.car_label }}",
+        "emailType": "html",
+        "message": "<!-- PLACEHOLDER: Replace with inquiry-admin.html content -->\n<p><strong>New inquiry received</strong></p>\n<p><strong>Code:</strong> {{ $json.body.booking_code }}<br><strong>Customer:</strong> {{ $json.body.customer_name }} ({{ $json.body.customer_email }})<br><strong>Phone:</strong> {{ $json.body.customer_phone }}<br><strong>Car:</strong> {{ $json.body.car_label }}<br><strong>Dates:</strong> {{ $json.body.dates_label }}<br><strong>Pickup:</strong> {{ $json.body.pickup_label }}<br><strong>Total:</strong> {{ $json.body.estimated_total }}</p>\n{% if $json.body.customer_message %}<p><strong>Message:</strong> {{ $json.body.customer_message }}</p>{% endif %}\n<p><a href=\"{{ $json.body.status_page_url }}\">View status page →</a></p>"
+      },
+      "id": "email-admin-inquiry",
+      "name": "Email Admin (Inquiry)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [680, 340]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.RESEND_FROM_EMAIL }}",
+        "toEmail": "={{ $json.body.customer_email }}",
+        "subject": "Confirmed — {{ $json.body.car_label }} · {{ $json.body.dates_label }}",
+        "emailType": "html",
+        "message": "<!-- PLACEHOLDER: Replace with booking-confirmed-customer.html content -->\n<p>Hi {{ $json.body.customer_name }},</p>\n<p>Your reservation is confirmed.</p>\n<p><strong>Car:</strong> {{ $json.body.car_label }}<br><strong>Dates:</strong> {{ $json.body.dates_label }}<br><strong>Pickup:</strong> {{ $json.body.pickup_label }}<br><strong>Estimated total:</strong> {{ $json.body.estimated_total }}<br><strong>Refundable deposit at pickup:</strong> {{ $json.body.deposit }}</p>\n<p>Please bring your driver's license and passport at pickup. Payment is in person.</p>\n<p><a href=\"{{ $json.body.status_page_url }}\">View your booking →</a></p>\n<p>— CostaSol Car Rent</p>"
+      },
+      "id": "email-customer-confirmed",
+      "name": "Email Customer (Confirmed)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [680, 460]
+    },
+    {
+      "parameters": {
+        "phoneNumber": "={{ $json.body.customer_phone }}",
+        "message": "Hi {{ $json.body.customer_name }}, this is CostaSol. Your request for the {{ $json.body.car_label }} ({{ $json.body.dates_label }}) is confirmed. Booking: {{ $json.body.booking_code }}. See details: {{ $json.body.status_page_url }}"
+      },
+      "id": "whatsapp-placeholder",
+      "name": "WhatsApp (disabled — configure Business API)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [900, 460],
+      "disabled": true,
+      "notes": "Enable this node and connect to your WhatsApp Business API provider (e.g. 360dialog, Twilio) to send WhatsApp confirmations."
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Is Inquiry or Confirmed?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is Inquiry or Confirmed?": {
+      "main": [
+        [
+          { "node": "Email Customer (Inquiry)", "type": "main", "index": 0 },
+          { "node": "Email Admin (Inquiry)", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Customer (Confirmed)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Customer (Confirmed)": {
+      "main": [
+        [{ "node": "WhatsApp (disabled — configure Business API)", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

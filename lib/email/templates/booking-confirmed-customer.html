@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmed — {{car_label}}</title>
+</head>
+<body style="margin:0;padding:0;background:#0F0F10;font-family:'Inter',Helvetica,Arial,sans-serif;color:#FFFFFF;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0F0F10;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+          <tr>
+            <td style="padding-bottom:32px;border-bottom:1px solid rgba(200,169,107,0.15);">
+              <p style="margin:0;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A96B;">
+                CostaSol Car Rent
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:32px 0;">
+              <h1 style="margin:0 0 8px;font-family:Georgia,serif;font-size:32px;font-weight:300;color:#FFFFFF;letter-spacing:-0.02em;">
+                Reservation confirmed
+              </h1>
+              <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#B8B8B8;">
+                Hi {{customer_name}}, your reservation is confirmed. We look forward to seeing you.
+              </p>
+
+              <table width="100%" cellpadding="0" cellspacing="0"
+                style="background:#1B1B1D;border:1px solid rgba(200,169,107,0.15);border-radius:4px;margin-bottom:24px;">
+                <tr><td style="padding:24px;">
+                  <p style="margin:0 0 4px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Car</p>
+                  <p style="margin:0 0 16px;font-size:16px;font-weight:500;color:#FFFFFF;">{{car_label}}</p>
+
+                  <p style="margin:0 0 4px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Dates</p>
+                  <p style="margin:0 0 16px;font-size:14px;color:#FFFFFF;">{{dates_label}}</p>
+
+                  <p style="margin:0 0 4px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Pickup</p>
+                  <p style="margin:0 0 16px;font-size:14px;color:#FFFFFF;">{{pickup_label}}</p>
+
+                  <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td width="50%">
+                        <p style="margin:0 0 4px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Payment at pickup</p>
+                        <p style="margin:0;font-size:18px;font-weight:500;color:#C8A96B;">{{estimated_total}}</p>
+                      </td>
+                      <td width="50%">
+                        <p style="margin:0 0 4px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">Refundable deposit</p>
+                        <p style="margin:0;font-size:14px;color:#FFFFFF;">{{deposit}}</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td></tr>
+              </table>
+
+              <!-- What to bring -->
+              <table width="100%" cellpadding="0" cellspacing="0"
+                style="background:#1B1B1D;border:1px solid rgba(200,169,107,0.15);border-radius:4px;margin-bottom:24px;">
+                <tr><td style="padding:20px;">
+                  <p style="margin:0 0 12px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#B8B8B8;">At pickup, bring</p>
+                  <p style="margin:0 0 6px;font-size:14px;color:#FFFFFF;">&#10003; Driver&rsquo;s license</p>
+                  <p style="margin:0 0 6px;font-size:14px;color:#FFFFFF;">&#10003; Passport</p>
+                  <p style="margin:0;font-size:14px;color:#FFFFFF;">&#10003; Payment (card or bank transfer)</p>
+                </td></tr>
+              </table>
+
+              <p style="margin:0 0 16px;text-align:center;">
+                <a href="{{status_page_url}}"
+                  style="display:inline-block;background:#C8A96B;color:#0F0F10;text-decoration:none;padding:14px 32px;border-radius:4px;font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;">
+                  View Your Booking
+                </a>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding-top:24px;border-top:1px solid rgba(200,169,107,0.15);">
+              <p style="margin:0;font-size:11px;color:#B8B8B8;line-height:1.6;">
+                CostaSol Car Rent &mdash; Marbella &amp; Costa del Sol<br>
+                <!-- PLACEHOLDER: Add address, phone, unsubscribe per GDPR -->
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

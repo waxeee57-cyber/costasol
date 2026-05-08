@@ -1,0 +1,69 @@
+export const dynamic = 'force-dynamic'
+
+import { notFound } from 'next/navigation'
+import { supabaseAdmin } from '@/lib/supabase'
+import { CarDetailClient } from './CarDetailClient'
+
+interface PageProps {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ start?: string; end?: string; pickup?: string }>
+}
+
+async function getCar(slug: string) {
+  const { data } = await supabaseAdmin
+    .from('cars')
+    .select('*')
+    .eq('slug', slug)
+    .neq('status', 'hidden')
+    .single()
+  return data
+}
+
+async function checkAvailability(carId: string, start: string, end: string): Promise<boolean> {
+  const startUtc = new Date(start).toISOString()
+  const endUtc = new Date(end).toISOString()
+
+  const { data } = await supabaseAdmin
+    .from('bookings')
+    .select('id')
+    .eq('car_id', carId)
+    .in('status', ['confirmed', 'picked_up', 'returned'])
+    .lt('start_at', endUtc)
+    .gt('end_at', startUtc)
+    .limit(1)
+
+  return !data || data.length === 0
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params
+  const car = await getCar(slug)
+  if (!car) return {}
+  return {
+    title: `${car.brand} ${car.model} — Luxury Car Rental Marbella`,
+    description: car.description?.slice(0, 155),
+  }
+}
+
+export default async function CarDetailPage({ params, searchParams }: PageProps) {
+  const [{ slug }, sp] = await Promise.all([params, searchParams])
+  const car = await getCar(slug)
+  if (!car) notFound()
+
+  const { start, end, pickup } = sp
+
+  let isAvailable = true
+  if (start && end && car.id) {
+    isAvailable = await checkAvailability(car.id, start, end)
+  }
+
+  return (
+    <CarDetailClient
+      car={car}
+      initialStart={start}
+      initialEnd={end}
+      initialPickup={pickup}
+      initialAvailable={isAvailable}
+    />
+  )
+}

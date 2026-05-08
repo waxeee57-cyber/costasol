@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"C:\\\\projects\\\\costasol\" -ErrorAction SilentlyContinue; if \\(-not \\(Test-Path \"C:\\\\projects\\\\costasol\"\\)\\) { Write-Output \"Directory does not exist\" } else { Write-Output \"Directory exists and is empty or has files above\" })",
+      "PowerShell(cd \"C:\\\\projects\\\\costasol\"; Get-ChildItem -Recurse -Name | Where-Object { $_ -notmatch 'node_modules|\\\\.next' })",
+      "PowerShell(cd \"C:\\\\projects\\\\costasol\"; Get-ChildItem app -Name -Recurse | Where-Object { $_ -notmatch '\\(public\\)|admin|api|\\(legal\\)' } | Select-Object)",
+      "PowerShell(npm run *)",
+      "PowerShell(cd \"C:\\\\projects\\\\costasol\"; Get-ChildItem -Recurse -Name | Where-Object { $_ -notmatch 'node_modules|\\\\.next|\\\\.claude' } | Sort-Object)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/api/health\" -UseBasicParsing 2>&1 | Select-Object -ExpandProperty Content)",
+      "PowerShell(New-Item *)",
+      "Bash(npm run *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(git config *)"
+    ]
+  }
+}
