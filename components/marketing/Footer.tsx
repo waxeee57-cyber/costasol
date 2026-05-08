@@ -15,7 +15,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-4">
-            <Logo />
+            <Logo height={32} />
             <p className="max-w-xs text-xs font-sans leading-relaxed text-muted">
               Luxury car rental in Marbella and the Costa del Sol.
               Concierge service, personally confirmed reservations.
