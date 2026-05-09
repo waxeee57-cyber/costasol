@@ -141,7 +141,7 @@ ${divider}
   Track your reservation status at any time using your booking reference
   and the email address you provided:
 </p>
-${button('View Reservation Status', `${SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
+${button('View Reservation Status', `${process.env.NEXT_PUBLIC_SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
 
 <p style="margin:16px 0 0;font-size:13px;color:${TEXT_GREY};line-height:1.6;">
   Need to make a change? Contact us directly —
@@ -305,7 +305,7 @@ ${divider}
 
 ${divider}
 
-${button('View Reservation', `${SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
+${button('View Reservation', `${process.env.NEXT_PUBLIC_SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
 
 <p style="margin:16px 0 0;font-size:13px;color:${TEXT_GREY};line-height:1.6;">
   Any questions before pickup? Contact us directly —
