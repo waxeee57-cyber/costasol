@@ -19,12 +19,20 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.drivecostasol.com'),
   title: {
     default: 'CostaSol Car Rent — Luxury Car Rental Marbella',
     template: '%s — CostaSol Car Rent',
   },
   description:
     'Luxury car rental in Marbella and the Costa del Sol. Concierge service, hotel delivery, personally confirmed reservations.',
+  keywords: [
+    'luxury car rental marbella',
+    'luxury car rental costa del sol',
+    'car hire marbella',
+    'lamborghini rental marbella',
+    'range rover rental costa del sol',
+  ],
   openGraph: {
     siteName: 'CostaSol Car Rent',
     locale: 'en_GB',
@@ -41,6 +49,11 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
   },
 }
 

@@ -22,9 +22,10 @@ interface CarCardProps {
   startDate?: string
   endDate?: string
   pickupLocation?: string
+  priority?: boolean
 }
 
-export function CarCard({ car, startDate, endDate, pickupLocation }: CarCardProps) {
+export function CarCard({ car, startDate, endDate, pickupLocation, priority = false }: CarCardProps) {
   const hasDates = !!(startDate && endDate)
   const days = hasDates
     ? differenceInCalendarDays(new Date(endDate), new Date(startDate))
@@ -52,6 +53,7 @@ export function CarCard({ car, startDate, endDate, pickupLocation }: CarCardProp
               className="object-cover img-zoom"
               style={{ objectPosition: 'center 65%' }}
               sizes="(max-width: 768px) 100vw, 50vw"
+              priority={priority}
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-graphite">

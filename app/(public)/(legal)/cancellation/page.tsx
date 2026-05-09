@@ -1,4 +1,8 @@
-export const metadata = { title: 'Cancellation Policy' }
+import type { Metadata } from 'next'
+export const metadata: Metadata = {
+  title: 'Cancellation Policy',
+  description: 'CostaSol Car Rent cancellation policy. To cancel or modify your reservation, contact us directly via WhatsApp or email as early as possible.',
+}
 
 export default function CancellationPage() {
   return (

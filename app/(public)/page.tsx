@@ -4,7 +4,14 @@ import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 
 export const metadata: Metadata = {
-  description: 'Luxury car rental along the Costa del Sol. Personally confirmed reservations, hotel delivery, no hidden fees.',
+  title: 'Luxury Car Rental Marbella & Costa del Sol',
+  description: 'Luxury car rental in Marbella and the Costa del Sol. Lamborghini, Range Rover and more. Hotel delivery, personally confirmed reservations, comprehensive insurance included.',
+  alternates: { canonical: 'https://www.drivecostasol.com' },
+  openGraph: {
+    title: 'CostaSol Car Rent — Luxury Car Rental Marbella',
+    description: 'Luxury car rental in Marbella and the Costa del Sol. Hotel delivery, concierge service, personally confirmed reservations.',
+    url: 'https://www.drivecostasol.com',
+  },
 }
 
 import Image from 'next/image'
@@ -36,8 +43,70 @@ async function getAvailableCarCount() {
 export default async function HomePage() {
   const [cars, count] = await Promise.all([getAvailableCars(), getAvailableCarCount()])
 
+  const phone = process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? ''
+
+  const carRentalSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CarRental',
+    name: 'CostaSol Car Rent',
+    description: 'Luxury car rental in Marbella and the Costa del Sol, Spain. Concierge service with hotel delivery.',
+    url: 'https://www.drivecostasol.com',
+    ...(phone && { telephone: phone }),
+    email: 'rent@drivecostasol.com',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Marbella',
+      addressRegion: 'Andalucía',
+      addressCountry: 'ES',
+    },
+    areaServed: 'Costa del Sol, Spain',
+    priceRange: '€€€',
+    currenciesAccepted: 'EUR',
+    paymentAccepted: 'Cash, Credit Card',
+    openingHours: 'Mo-Su 09:00-20:00',
+  }
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How does the booking process work?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Submit a request through the site or WhatsApp. We confirm personally, usually within the hour during business hours. We deliver the car to your hotel — payment and documents at pickup.' },
+      },
+      {
+        '@type': 'Question',
+        name: 'When and how do I pay?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Payment is made in person at pickup by card or bank transfer. We do not charge your card online. A refundable deposit is also held at pickup and returned when the car comes back in good condition.' },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is a deposit required?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Yes. A refundable security deposit is held at pickup. The amount depends on the vehicle. It is returned in full on the same day the car is returned undamaged.' },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is included in the daily rate?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Comprehensive insurance, unlimited mileage within Spain, 24/7 roadside assistance, and delivery and collection within 25km of San Juan de los Terreros. Nothing hidden.' },
+      },
+      {
+        '@type': 'Question',
+        name: 'What are the age and license requirements?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Drivers must be at least 25 years old and hold a full driving licence issued at least 2 years ago. International licences are accepted.' },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the cancellation policy?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Cancellations must be made by contacting us directly via WhatsApp or email. Our cancellation policy is communicated at the time of booking confirmation.' },
+      },
+    ],
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(carRentalSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       {/* Hero */}
       <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black">
         {/* Background image */}
@@ -118,8 +187,8 @@ export default async function HomePage() {
           </div>
 
           <div className={`grid grid-cols-1 gap-6 ${cars.length === 3 ? 'md:grid-cols-3' : cars.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'}`}>
-            {cars.map((car) => (
-              <CarCard key={car.slug} car={car} />
+            {cars.map((car, index) => (
+              <CarCard key={car.slug} car={car} priority={index === 0} />
             ))}
           </div>
 

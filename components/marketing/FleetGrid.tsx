@@ -45,13 +45,14 @@ export function FleetGrid({ cars, startDate, endDate, pickupLocation, emptyMessa
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      {cars.map((car) => (
+      {cars.map((car, index) => (
         <CarCard
           key={car.slug}
           car={car}
           startDate={startDate}
           endDate={endDate}
           pickupLocation={pickupLocation}
+          priority={index === 0}
         />
       ))}
     </div>

@@ -7,8 +7,14 @@ import { FleetGrid } from '@/components/marketing/FleetGrid'
 import { FleetFilters } from '@/components/marketing/FleetFilters'
 
 export const metadata: Metadata = {
-  title: 'Our Fleet',
-  description: 'Browse our luxury fleet — Lamborghini, Range Rover and more. Available across the Costa del Sol.',
+  title: 'Luxury Car Rental Fleet — Marbella & Costa del Sol',
+  description: 'Browse our luxury car hire fleet — Lamborghini, Range Rover and more. Available in Marbella, Puerto Banús, Málaga Airport and across the Costa del Sol. Hotel delivery included.',
+  alternates: { canonical: 'https://www.drivecostasol.com/fleet' },
+  openGraph: {
+    title: 'Luxury Car Rental Fleet — CostaSol Car Rent',
+    description: 'Lamborghini, Range Rover and more. Available in Marbella and across the Costa del Sol.',
+    url: 'https://www.drivecostasol.com/fleet',
+  },
 }
 
 interface PageProps {
@@ -91,11 +97,38 @@ async function AvailableCarsGrid({ start, end, pickup, category }: { start?: str
   )
 }
 
+async function getAllCarsForSchema() {
+  const { data } = await supabaseAdmin
+    .from('cars')
+    .select('slug, brand, model, year')
+    .neq('status', 'hidden')
+    .order('daily_price_eur', { ascending: false })
+  return data ?? []
+}
+
 export default async function FleetPage({ searchParams }: PageProps) {
   const params = await searchParams
   const { start, end, pickup, category } = params
 
+  const schemaCars = await getAllCarsForSchema()
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Luxury Car Rental Fleet — CostaSol Car Rent',
+    description: 'Available luxury vehicles for hire on the Costa del Sol, Spain',
+    url: 'https://www.drivecostasol.com/fleet',
+    numberOfItems: schemaCars.length,
+    itemListElement: schemaCars.map((car, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: `${car.brand} ${car.model} ${car.year}`,
+      url: `https://www.drivecostasol.com/fleet/${car.slug}`,
+    })),
+  }
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
     <div className="min-h-screen bg-black">
       {/* Page header */}
       <div className="border-b border-border bg-black pt-12 pb-8 md:pt-16 md:pb-10">
@@ -128,5 +161,6 @@ export default async function FleetPage({ searchParams }: PageProps) {
         </Suspense>
       </div>
     </div>
+    </>
   )
 }

@@ -4,8 +4,9 @@ import { MessageCircle } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'CostaSol Car Rent — a personal, concierge car rental service based in Marbella, Costa del Sol.',
+  title: 'About CostaSol Car Rent',
+  description: 'CostaSol Car Rent is a personal, concierge luxury car rental service based in Marbella, Costa del Sol. Every reservation confirmed personally. Every car delivered to your hotel.',
+  alternates: { canonical: 'https://www.drivecostasol.com/about' },
 }
 
 export default function AboutPage() {

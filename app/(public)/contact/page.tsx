@@ -4,8 +4,9 @@ import { isWhatsAppConfigured } from '@/lib/whatsapp'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contact',
-  description: 'Get in touch with CostaSol Car Rent. Email us at rent@drivecostasol.com or look up your reservation status.',
+  title: 'Contact & Pickup Locations',
+  description: 'Contact CostaSol Car Rent for luxury car hire in Marbella. Email rent@drivecostasol.com or message on WhatsApp. Delivery to Marbella, Puerto Banús, Málaga Airport and more.',
+  alternates: { canonical: 'https://www.drivecostasol.com/contact' },
 }
 
 const PICKUP_LOCATIONS = [

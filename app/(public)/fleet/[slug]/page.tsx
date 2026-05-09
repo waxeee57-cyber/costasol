@@ -39,9 +39,22 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
   const car = await getCar(slug)
   if (!car) return {}
+  const title = `${car.brand} ${car.model} Rental Marbella & Costa del Sol`
+  const description = car.description
+    ? car.description.slice(0, 155)
+    : `Hire a ${car.brand} ${car.model} (${car.year}) on the Costa del Sol. Hotel delivery, comprehensive insurance included. Personally confirmed reservation.`
   return {
-    title: `${car.brand} ${car.model} — Luxury Car Rental Marbella`,
-    description: car.description?.slice(0, 155),
+    title,
+    description,
+    alternates: { canonical: `https://www.drivecostasol.com/fleet/${slug}` },
+    openGraph: {
+      title: `${car.brand} ${car.model} — Luxury Car Rental | CostaSol`,
+      description,
+      url: `https://www.drivecostasol.com/fleet/${slug}`,
+      ...(car.photos?.[0]?.url && {
+        images: [{ url: car.photos[0].url, width: 1200, height: 800, alt: `${car.brand} ${car.model}` }],
+      }),
+    },
   }
 }
 
@@ -57,13 +70,33 @@ export default async function CarDetailPage({ params, searchParams }: PageProps)
     isAvailable = await checkAvailability(car.id, start, end)
   }
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: `${car.brand} ${car.model} ${car.year}`,
+    description: car.description ?? `${car.brand} ${car.model} luxury car rental in Marbella and the Costa del Sol`,
+    ...(car.photos?.[0]?.url && { image: car.photos[0].url }),
+    brand: { '@type': 'Brand', name: car.brand },
+    offers: {
+      '@type': 'Offer',
+      price: car.daily_price_eur,
+      priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock',
+      priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+      seller: { '@type': 'Organization', name: 'CostaSol Car Rent' },
+    },
+  }
+
   return (
-    <CarDetailClient
-      car={car}
-      initialStart={start}
-      initialEnd={end}
-      initialPickup={pickup}
-      initialAvailable={isAvailable}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
+      <CarDetailClient
+        car={car}
+        initialStart={start}
+        initialEnd={end}
+        initialPickup={pickup}
+        initialAvailable={isAvailable}
+      />
+    </>
   )
 }
