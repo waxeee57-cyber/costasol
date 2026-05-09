@@ -2,15 +2,14 @@ export const dynamic = 'force-dynamic'
 
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-
-export const metadata: Metadata = {
-  title: 'Our Fleet',
-  description:
-    'Browse our luxury fleet. Lamborghini, Range Rover and more. Available in Marbella and along the Costa del Sol.',
-}
 import { supabaseAdmin } from '@/lib/supabase'
 import { FleetGrid } from '@/components/marketing/FleetGrid'
 import { FleetFilters } from '@/components/marketing/FleetFilters'
+
+export const metadata: Metadata = {
+  title: 'Our Fleet',
+  description: 'Browse our luxury fleet — Lamborghini, Range Rover and more. Available across the Costa del Sol.',
+}
 
 interface PageProps {
   searchParams: Promise<{ start?: string; end?: string; pickup?: string; category?: string }>
@@ -30,7 +29,6 @@ async function getAvailableCars(startDate?: string, endDate?: string, category?:
   const { data: allCars } = await query
   if (!allCars) return []
 
-  // Filter out cars with confirmed/picked_up/returned overlap
   if (startDate && endDate) {
     const startUtc = new Date(startDate).toISOString()
     const endUtc = new Date(endDate).toISOString()
@@ -50,11 +48,52 @@ async function getAvailableCars(startDate?: string, endDate?: string, category?:
   return allCars
 }
 
+function FleetGridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      {[0, 1].map((i) => (
+        <div key={i} className="rounded-lg border border-border bg-graphite overflow-hidden animate-pulse">
+          <div className="aspect-[16/9] bg-white/5" />
+          <div className="p-6 space-y-3">
+            <div className="h-7 w-48 rounded bg-white/5" />
+            <div className="h-4 w-16 rounded bg-white/5" />
+            <div className="mt-4 flex gap-4">
+              <div className="h-4 w-20 rounded bg-white/5" />
+              <div className="h-4 w-20 rounded bg-white/5" />
+              <div className="h-4 w-12 rounded bg-white/5" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+async function AvailableCarsGrid({ start, end, pickup, category }: { start?: string; end?: string; pickup?: string; category?: string }) {
+  const cars = await getAvailableCars(start, end, category)
+  return (
+    <>
+      {start && end && (
+        <p className="mb-6 font-sans text-sm text-muted">
+          {cars.length === 0
+            ? 'No cars available for these dates.'
+            : `${cars.length} car${cars.length !== 1 ? 's' : ''} available`}
+        </p>
+      )}
+      <FleetGrid
+        cars={cars}
+        startDate={start}
+        endDate={end}
+        pickupLocation={pickup}
+        emptyMessage="No cars available for these dates. Try adjusting your dates or message us on WhatsApp."
+      />
+    </>
+  )
+}
+
 export default async function FleetPage({ searchParams }: PageProps) {
   const params = await searchParams
   const { start, end, pickup, category } = params
-
-  const cars = await getAvailableCars(start, end, category)
 
   return (
     <div className="min-h-screen bg-black">
@@ -82,22 +121,11 @@ export default async function FleetPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* Grid */}
+      {/* Grid with skeleton fallback */}
       <div className="mx-auto max-w-7xl px-6 py-12">
-        {start && end && (
-          <p className="mb-6 font-sans text-sm text-muted">
-            {cars.length === 0
-              ? 'No cars available for these dates.'
-              : `${cars.length} car${cars.length !== 1 ? 's' : ''} available`}
-          </p>
-        )}
-        <FleetGrid
-          cars={cars}
-          startDate={start}
-          endDate={end}
-          pickupLocation={pickup}
-          emptyMessage="No cars available for these dates. Try adjusting your dates or message us on WhatsApp."
-        />
+        <Suspense fallback={<FleetGridSkeleton />}>
+          <AvailableCarsGrid start={start} end={end} pickup={pickup} category={category} />
+        </Suspense>
       </div>
     </div>
   )

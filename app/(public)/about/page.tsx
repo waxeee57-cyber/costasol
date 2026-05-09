@@ -1,7 +1,12 @@
 import { buildWhatsAppLink, isWhatsAppConfigured } from '@/lib/whatsapp'
 import { MessageCircle } from 'lucide-react'
 
-export const metadata = { title: 'About' }
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'About',
+  description: 'CostaSol Car Rent — a personal, concierge car rental service based in Marbella, Costa del Sol.',
+}
 
 export default function AboutPage() {
   const waConfigured = isWhatsAppConfigured()

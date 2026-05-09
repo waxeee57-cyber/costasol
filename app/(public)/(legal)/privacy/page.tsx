@@ -1,4 +1,5 @@
-export const metadata = { title: 'Privacy Policy' }
+import type { Metadata } from 'next'
+export const metadata: Metadata = { title: 'Privacy Policy', description: 'Privacy Policy — CostaSol Car Rent' }
 
 export default function PrivacyPage() {
   const email = process.env.ADMIN_EMAIL ?? 'rent@drivecostasol.com'

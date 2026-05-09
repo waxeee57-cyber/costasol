@@ -1,7 +1,7 @@
 import { Shield, UserCheck, Hotel, BadgeCheck } from 'lucide-react'
 
 const items = [
-  { icon: Shield, label: 'Fully Insured', desc: 'Comprehensive coverage included' },
+  { icon: Shield, label: 'Fully Insured', desc: 'Comprehensive coverage included on every rental.' },
   { icon: UserCheck, label: 'Concierge Service', desc: 'Personal confirmation, every time' },
   { icon: Hotel, label: 'Hotel Delivery', desc: 'Delivered to your door' },
   { icon: BadgeCheck, label: 'No Hidden Fees', desc: 'The price you see is what you pay' },

@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch with CostaSol Car Rent. We deliver to your hotel in Marbella, Puerto Banús, Estepona, and across the Costa del Sol.',
+  description: 'Get in touch with CostaSol Car Rent. Email us at rent@drivecostasol.com or look up your reservation status.',
 }
 
 const PICKUP_LOCATIONS = [

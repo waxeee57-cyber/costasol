@@ -9,7 +9,13 @@ const legal = [
   { href: '/cancellation', label: 'Cancellation' },
 ]
 
+function isValidPhone(num: string): boolean {
+  const clean = num.replace(/\D/g, '')
+  return clean.length > 0 && !clean.startsWith('36')
+}
+
 export function Footer() {
+  const phone = process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? ''
   return (
     <footer className="border-t border-border bg-black">
       <div className="mx-auto max-w-7xl px-6 py-16">
@@ -30,12 +36,12 @@ export function Footer() {
             >
               rent@drivecostasol.com
             </a>
-            {process.env.NEXT_PUBLIC_BUSINESS_PHONE && (
+            {isValidPhone(phone) && (
               <a
-                href={`tel:${process.env.NEXT_PUBLIC_BUSINESS_PHONE}`}
+                href={`tel:${phone}`}
                 className="text-sm font-sans text-muted hover:text-white transition-colors"
               >
-                {process.env.NEXT_PUBLIC_BUSINESS_PHONE}
+                {phone}
               </a>
             )}
           </div>

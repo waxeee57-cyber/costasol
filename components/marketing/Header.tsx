@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { Logo } from '@/components/brand/Logo'
 import { cn } from '@/lib/utils'
@@ -14,6 +15,7 @@ const navLinks = [
 
 export function Header() {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-black/80 backdrop-blur-md">
@@ -26,7 +28,10 @@ export function Header() {
             <Link
               key={l.href}
               href={l.href}
-              className="font-sans text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-white"
+              className={cn(
+                'font-sans text-xs uppercase tracking-[0.15em] transition-colors duration-200',
+                pathname.startsWith(l.href) ? 'text-gold' : 'text-muted hover:text-white'
+              )}
             >
               {l.label}
             </Link>
@@ -56,7 +61,10 @@ export function Header() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="font-sans text-sm uppercase tracking-[0.15em] text-muted hover:text-white py-1"
+              className={cn(
+                'font-sans text-sm uppercase tracking-[0.15em] py-1 transition-colors duration-200',
+                pathname.startsWith(l.href) ? 'text-gold' : 'text-muted hover:text-white'
+              )}
             >
               {l.label}
             </Link>

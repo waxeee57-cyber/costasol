@@ -1,5 +1,11 @@
 export const dynamic = 'force-dynamic'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  description: 'Luxury car rental along the Costa del Sol. Personally confirmed reservations, hotel delivery, no hidden fees.',
+}
+
 import Image from 'next/image'
 import { supabaseAdmin } from '@/lib/supabase'
 import { HeroSearch } from '@/components/marketing/HeroSearch'
@@ -38,7 +44,7 @@ export default async function HomePage() {
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=2400&q=80"
-            alt="Dramatic cinematic luxury car shot"
+            alt="Luxury sports car on the Costa del Sol"
             fill
             className="object-cover object-center"
             priority
