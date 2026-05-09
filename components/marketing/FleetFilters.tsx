@@ -53,39 +53,8 @@ export function FleetFilters({ initialStart, initialEnd, initialPickup, initialC
 
   return (
     <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-      {/* Date + location row on mobile */}
-      <div className="flex gap-2 md:contents">
-        <div className="flex-1 md:flex-1 md:max-w-xs">
-          <DateRangePicker
-            value={range}
-            onChange={(r) => {
-              setRange(r)
-              if (r?.from && r?.to) apply({ range: r })
-            }}
-            placeholder="Any dates"
-            maxDays={14}
-          />
-        </div>
-
-        {/* Location */}
-        <div className="w-40 md:w-48 shrink-0">
-          <Select value={pickup} onValueChange={(v) => { setPickup(v); apply({ pickup: v }) }}>
-            <SelectTrigger>
-              <span className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-gold shrink-0" />
-                <SelectValue placeholder="Any location" />
-              </span>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Any location</SelectItem>
-              {PICKUP_LOCATIONS.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Category chips — horizontal scroll on mobile */}
-      <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-none md:flex-wrap">
+      {/* Category chips — first on mobile (top), last on desktop */}
+      <div className="order-first md:order-last flex gap-2 overflow-x-auto pb-0.5 scrollbar-none md:flex-wrap">
         {CATEGORIES.map((c) => (
           <button
             key={c}
@@ -117,6 +86,37 @@ export function FleetFilters({ initialStart, initialEnd, initialPickup, initialC
             Clear
           </button>
         )}
+      </div>
+
+      {/* Date + location — below chips on mobile, first on desktop */}
+      <div className="order-last md:order-first flex gap-2 md:contents">
+        <div className="flex-1 md:flex-1 md:max-w-xs">
+          <DateRangePicker
+            value={range}
+            onChange={(r) => {
+              setRange(r)
+              if (r?.from && r?.to) apply({ range: r })
+            }}
+            placeholder="Any dates"
+            maxDays={14}
+          />
+        </div>
+
+        {/* Location */}
+        <div className="w-40 md:w-48 shrink-0">
+          <Select value={pickup} onValueChange={(v) => { setPickup(v); apply({ pickup: v }) }}>
+            <SelectTrigger>
+              <span className="flex items-center gap-2">
+                <MapPin className="h-3.5 w-3.5 text-gold shrink-0" />
+                <SelectValue placeholder="Any location" />
+              </span>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Any location</SelectItem>
+              {PICKUP_LOCATIONS.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   )

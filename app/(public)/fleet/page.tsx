@@ -1,6 +1,13 @@
 export const dynamic = 'force-dynamic'
 
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
+
+export const metadata: Metadata = {
+  title: 'Our Fleet',
+  description:
+    'Browse our luxury fleet. Lamborghini, Range Rover and more. Available in Marbella and along the Costa del Sol.',
+}
 import { supabaseAdmin } from '@/lib/supabase'
 import { FleetGrid } from '@/components/marketing/FleetGrid'
 import { FleetFilters } from '@/components/marketing/FleetFilters'

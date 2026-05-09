@@ -43,22 +43,24 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="h-5 w-5 shrink-0 mt-0.5 flex items-center justify-center">
-                  <div className="h-2 w-2 rounded-full bg-whatsapp" />
+              {wa && (
+                <div className="flex items-start gap-4">
+                  <div className="h-5 w-5 shrink-0 mt-0.5 flex items-center justify-center">
+                    <div className="h-2 w-2 rounded-full bg-whatsapp" />
+                  </div>
+                  <div>
+                    <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-muted mb-2">WhatsApp</p>
+                    <a
+                      href={`https://wa.me/${wa}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 h-12 rounded-md bg-whatsapp px-6 text-sm font-sans font-medium text-white hover:opacity-90 transition-opacity"
+                    >
+                      Message us on WhatsApp
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-muted mb-2">WhatsApp</p>
-                  <a
-                    href={`https://wa.me/${wa}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 h-12 rounded-md bg-whatsapp px-6 text-sm font-sans font-medium text-white hover:opacity-90 transition-opacity"
-                  >
-                    Message us on WhatsApp
-                  </a>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Pickup locations */}

@@ -21,7 +21,7 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: {
     default: 'CostaSol Car Rent — Luxury Car Rental Marbella',
-    template: '%s | CostaSol Car Rent',
+    template: '%s — CostaSol Car Rent',
   },
   description:
     'Luxury car rental in Marbella and the Costa del Sol. Concierge service, hotel delivery, personally confirmed reservations.',
@@ -29,6 +29,18 @@ export const metadata: Metadata = {
     siteName: 'CostaSol Car Rent',
     locale: 'en_GB',
     type: 'website',
+    images: [
+      {
+        url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80',
+        width: 1200,
+        height: 800,
+        alt: 'CostaSol Car Rent — Luxury Car Rental Marbella',
+      },
+    ],
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
 }
 

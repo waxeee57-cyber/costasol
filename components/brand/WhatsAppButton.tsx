@@ -9,6 +9,8 @@ interface WhatsAppButtonProps {
 }
 
 export function WhatsAppButton({ message, className }: WhatsAppButtonProps) {
+  if (!process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP) return null
+
   const href = buildWhatsAppLink(message)
 
   return (
