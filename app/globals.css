@@ -19,7 +19,7 @@
 
   /* Fonts */
   --font-display: var(--font-cormorant), "Cormorant Garamond", serif;
-  --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-sans: var(--font-sans), "DM Sans", sans-serif;
 
   /* Border radii — brand uses minimal rounding */
   --radius-sm: 2px;

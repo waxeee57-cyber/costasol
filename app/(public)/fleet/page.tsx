@@ -102,7 +102,7 @@ export default async function FleetPage({ searchParams }: PageProps) {
         <div className="mx-auto max-w-7xl px-6">
           <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-2">Our Fleet</p>
           <h1 className="font-display text-4xl font-light text-white tracking-tight md:text-5xl">
-            Available cars
+            {start && end ? 'Available cars' : 'Our Fleet'}
           </h1>
         </div>
       </div>
