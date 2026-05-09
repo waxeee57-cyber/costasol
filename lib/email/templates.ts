@@ -88,6 +88,7 @@ function row(label: string, value: string): string {
 
 export function inquiryConfirmationEmail(data: {
   customerName: string
+  customerEmail: string
   carLabel: string
   startAt: string
   endAt: string
@@ -140,7 +141,7 @@ ${divider}
   Track your reservation status at any time using your booking reference
   and the email address you provided:
 </p>
-${button('View Reservation Status', `${SITE_URL}/booking/${data.bookingCode}`)}
+${button('View Reservation Status', `${SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
 
 <p style="margin:16px 0 0;font-size:13px;color:${TEXT_GREY};line-height:1.6;">
   Need to make a change? Contact us directly —
@@ -238,6 +239,7 @@ ${button('Open in Admin Panel', adminUrl)}`
 
 export function bookingConfirmedEmail(data: {
   customerName: string
+  customerEmail: string
   carLabel: string
   startAt: string
   endAt: string
@@ -303,7 +305,7 @@ ${divider}
 
 ${divider}
 
-${button('View Reservation', `${SITE_URL}/booking/${data.bookingCode}`)}
+${button('View Reservation', `${SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
 
 <p style="margin:16px 0 0;font-size:13px;color:${TEXT_GREY};line-height:1.6;">
   Any questions before pickup? Contact us directly —
