@@ -98,7 +98,7 @@ export default async function FleetPage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen bg-black">
       {/* Page header */}
-      <div className="border-b border-border bg-black pt-8 pb-6">
+      <div className="border-b border-border bg-black pt-12 pb-8 md:pt-16 md:pb-10">
         <div className="mx-auto max-w-7xl px-6">
           <p className="font-sans text-xs uppercase tracking-[0.2em] text-gold mb-2">Our Fleet</p>
           <h1 className="font-display text-4xl font-light text-white tracking-tight md:text-5xl">

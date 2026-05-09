@@ -64,7 +64,7 @@ export default async function HomePage() {
           </div>
 
           {/* Tagline */}
-          <h1 className="font-display text-5xl font-light leading-tight tracking-[-0.02em] text-white md:text-7xl lg:text-8xl">
+          <h1 className="font-display text-5xl font-light leading-tight tracking-[-0.02em] text-white md:text-7xl lg:text-8xl lg:leading-[1.05]">
             The Coast,<br />Driven Beautifully
           </h1>
 

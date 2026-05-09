@@ -1,6 +1,12 @@
 import Link from 'next/link'
 import { Logo } from '@/components/brand/Logo'
 
+const nav = [
+  { href: '/fleet', label: 'Our Fleet' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+]
+
 const legal = [
   { href: '/terms', label: 'Terms' },
   { href: '/privacy', label: 'Privacy' },
@@ -26,6 +32,19 @@ export function Footer() {
               Luxury car rental along the Costa del Sol.
               Personal service. No compromises.
             </p>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <p className="text-xs font-sans uppercase tracking-[0.15em] text-gold">Navigate</p>
+            {nav.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm font-sans text-muted hover:text-white transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
           </div>
 
           <div className="flex flex-col gap-3">

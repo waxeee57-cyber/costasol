@@ -29,7 +29,7 @@ export function Header() {
               key={l.href}
               href={l.href}
               className={cn(
-                'font-sans text-xs uppercase tracking-[0.15em] transition-colors duration-200',
+                'nav-link font-sans text-xs uppercase tracking-[0.15em] transition-colors duration-200',
                 pathname.startsWith(l.href) ? 'text-gold' : 'text-muted hover:text-white'
               )}
             >
