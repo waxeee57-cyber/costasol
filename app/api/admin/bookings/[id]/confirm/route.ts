@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { getSession } from '@/lib/supabase-server'
-import { notifyInquiry } from '@/lib/n8n'
-import { formatDate, formatPriceDecimals } from '@/lib/formatters'
+import { sendConfirmationEmails } from '@/lib/email/send'
+import { formatTime } from '@/lib/formatters'
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession()
@@ -50,25 +50,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (error) return NextResponse.json({ error: 'Update failed' }, { status: 500 })
 
-  // Fire n8n confirmation notification (non-blocking)
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const statusPageUrl = `${siteUrl}/booking/${booking.booking_code}?email=${encodeURIComponent(booking.customer.email)}`
-
-  notifyInquiry({
-    event: 'confirmed',
-    booking_code: booking.booking_code,
-    customer_name: booking.customer.full_name,
-    customer_email: booking.customer.email,
-    customer_phone: booking.customer.phone ?? '',
-    customer_message: booking.customer_message ?? '',
-    car_label: `${booking.car.brand} ${booking.car.model} ${booking.car.year}`,
-    dates_label: `${formatDate(booking.start_at)} → ${formatDate(booking.end_at)}`,
+  // Fire-and-forget confirmation email notifications
+  sendConfirmationEmails({
+    customerName: booking.customer.full_name,
+    customerEmail: booking.customer.email,
+    carLabel: `${booking.car.brand} ${booking.car.model} ${booking.car.year}`,
+    startAt: booking.start_at,
+    endAt: booking.end_at,
     days: booking.days,
-    pickup_label: `${booking.pickup_location} · ${new Date(booking.start_at).toISOString().slice(11, 16)}`,
-    estimated_total: formatPriceDecimals(booking.total_eur),
-    deposit: formatPriceDecimals(booking.deposit_eur),
-    status_page_url: statusPageUrl,
-  }).catch((err) => console.warn('[confirm] n8n notify failed', err))
+    pickupLocation: booking.pickup_location,
+    pickupTime: booking.pickup_time ?? formatTime(booking.start_at),
+    totalEur: booking.total_eur,
+    depositEur: booking.deposit_eur,
+    bookingCode: booking.booking_code,
+    transferRequested: booking.transfer_requested,
+    transferAddress: booking.transfer_address ?? undefined,
+    transferFeeEur: booking.transfer_fee_eur ?? null,
+  }).catch((err) => console.error('[Email] sendConfirmationEmails threw:', err))
 
   return NextResponse.json({ ok: true })
 }

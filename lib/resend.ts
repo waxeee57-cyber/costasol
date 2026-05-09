@@ -1,38 +1,52 @@
 import { Resend } from 'resend'
 
-const apiKey = process.env.RESEND_API_KEY ?? ''
-const isDev = !apiKey || apiKey === 'dev'
+const apiKey = process.env.RESEND_API_KEY
 
-const resendClient = isDev ? null : new Resend(apiKey)
+export const resend = apiKey ? new Resend(apiKey) : null
 
-interface SendEmailOpts {
+export const FROM =
+  `${process.env.RESEND_FROM_NAME ?? 'CostaSol Car Rent'} <${
+    process.env.RESEND_FROM_EMAIL ?? 'noreply@drivecostasol.com'
+  }>`
+
+export const ADMIN_EMAIL =
+  process.env.ADMIN_EMAIL ?? 'rent@drivecostasol.com'
+
+export async function sendEmail({
+  to,
+  subject,
+  html,
+  replyTo,
+}: {
   to: string
   subject: string
   html: string
-  from?: string
-}
-
-export async function sendEmail(opts: SendEmailOpts): Promise<void> {
-  const from = opts.from ?? process.env.RESEND_FROM_EMAIL ?? 'noreply@example.com'
-
-  if (isDev) {
-    console.log('[resend:dev] email skipped — no API key configured', {
-      to: opts.to,
-      subject: opts.subject,
-      from,
-    })
-    return
+  replyTo?: string
+}): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.log('[Resend] No API key — email not sent:', { to, subject })
+    return { success: false, error: 'No API key configured' }
   }
 
-  const { error } = await resendClient!.emails.send({
-    from,
-    to: opts.to,
-    subject: opts.subject,
-    html: opts.html,
-  })
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM,
+      to,
+      subject,
+      html,
+      ...(replyTo ? { replyTo } : {}),
+    })
 
-  if (error) {
-    console.error('[resend] send failed', error)
-    throw error
+    if (error) {
+      console.error('[Resend] Send error:', error)
+      return { success: false, error: error.message }
+    }
+
+    console.log('[Resend] Sent:', { to, subject })
+    return { success: true }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[Resend] Exception:', message)
+    return { success: false, error: message }
   }
 }

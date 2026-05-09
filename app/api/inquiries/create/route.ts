@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { generateBookingCode } from '@/lib/booking-code'
-import { formatDate, formatTime, formatPriceDecimals, isFutureOrToday, TZ } from '@/lib/formatters'
-import { notifyInquiry } from '@/lib/n8n'
+import { isFutureOrToday, TZ } from '@/lib/formatters'
+import { sendInquiryEmails } from '@/lib/email/send'
 import { formatInTimeZone } from 'date-fns-tz'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { z } from 'zod'
@@ -131,29 +131,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Could not generate booking code. Please try again.' }, { status: 500 })
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const statusPageUrl = `${siteUrl}/booking/${booking_code}?email=${encodeURIComponent(email)}`
-
-  // Fire-and-forget n8n notification
-  notifyInquiry({
-    event: 'inquiry',
-    booking_code,
-    customer_name: full_name,
-    customer_email: email,
-    customer_phone: phone,
-    customer_message: message ?? '',
-    car_label: `${car.brand} ${car.model} ${car.year}`,
-    dates_label: `${formatDate(startDate)} → ${formatDate(endDate)}`,
+  // Fire-and-forget email notifications
+  sendInquiryEmails({
+    customerName: full_name,
+    customerEmail: email,
+    customerPhone: phone,
+    carLabel: `${car.brand} ${car.model} ${car.year}`,
+    startAt: startUtc,
+    endAt: endUtc,
     days,
-    pickup_label: transfer_requested
-      ? `Custom delivery · ${pickup_time}`
-      : `${pickup_location} · ${pickup_time}`,
-    estimated_total: formatPriceDecimals(total),
-    deposit: formatPriceDecimals(car.deposit_eur),
-    status_page_url: statusPageUrl,
-    transfer_requested,
-    transfer_address: transfer_requested ? (transfer_address ?? undefined) : undefined,
-  }).catch((err) => console.warn('[inquiries/create] n8n notify failed', err))
+    pickupLocation: transfer_requested ? 'Custom — see transfer address' : pickup_location,
+    pickupTime: pickup_time,
+    totalEur: total,
+    depositEur: car.deposit_eur,
+    bookingCode: booking_code,
+    customerMessage: message ?? undefined,
+    transferRequested: transfer_requested,
+    transferAddress: transfer_requested ? (transfer_address ?? undefined) : undefined,
+  }).catch((err) => console.error('[Email] sendInquiryEmails threw:', err))
 
   return NextResponse.json({ booking_code })
 }
