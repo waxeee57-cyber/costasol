@@ -21,7 +21,6 @@ async function getAvailableCars() {
     .from('cars')
     .select('slug, brand, model, year, category, daily_price_eur, transmission, fuel, seats, photos')
     .eq('status', 'available')
-    .limit(2)
 
   return data ?? []
 }
@@ -60,7 +59,7 @@ export default async function HomePage() {
           <div className="flex items-center gap-2.5 rounded-full border border-border bg-black/60 px-4 py-2 backdrop-blur-sm">
             <span className="animate-pulse-dot h-2 w-2 rounded-full bg-gold" />
             <span className="font-sans text-xs uppercase tracking-[0.2em] text-muted">
-              Real-time fleet availability
+              Live availability
             </span>
           </div>
 
@@ -118,7 +117,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className={`grid grid-cols-1 gap-6 ${cars.length === 3 ? 'md:grid-cols-3' : cars.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'}`}>
             {cars.map((car) => (
               <CarCard key={car.slug} car={car} />
             ))}
@@ -148,7 +147,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
             {[
               { step: '01', title: 'Browse', desc: 'Explore the fleet. Select dates and location. No account needed.' },
-              { step: '02', title: 'Request', desc: 'Submit your inquiry through the site or WhatsApp. Takes 60 seconds.' },
+              { step: '02', title: 'Request', desc: 'Submit your inquiry through the site or WhatsApp. It takes just a couple of minutes.' },
               { step: '03', title: 'Personal confirmation', desc: 'We confirm personally, usually within the hour during business hours. You will always hear from us before your pickup.' },
               { step: '04', title: 'Drive', desc: 'We deliver the car to your hotel. Payment and paperwork at pickup.' },
             ].map(({ step, title, desc }, index) => (

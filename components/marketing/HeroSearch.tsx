@@ -76,7 +76,7 @@ export function HeroSearch({ initialStart, initialEnd, initialPickup }: HeroSear
           onClick={handleSearch}
           className="w-full md:w-auto shrink-0 whitespace-nowrap"
         >
-          View Available Cars
+          {range?.from && range?.to ? 'View Available Cars' : 'Browse Our Fleet'}
         </Button>
       </div>
     </div>

@@ -50,6 +50,7 @@ export function CarCard({ car, startDate, endDate, pickupLocation }: CarCardProp
               alt={photo.alt}
               fill
               className="object-cover img-zoom"
+              style={{ objectPosition: 'center 65%' }}
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           ) : (
@@ -99,6 +100,10 @@ export function CarCard({ car, startDate, endDate, pickupLocation }: CarCardProp
               )}
             </div>
           </div>
+
+          <p className="font-sans text-[11px] text-muted mt-2.5">
+            Includes insurance · Hotel delivery · No hidden fees
+          </p>
 
           {/* Specs */}
           <div className="mt-4 flex items-center gap-4">

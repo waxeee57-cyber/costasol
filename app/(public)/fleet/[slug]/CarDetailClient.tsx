@@ -149,6 +149,7 @@ export function CarDetailClient({
               alt={currentPhoto.alt}
               fill
               className="object-cover gallery-3d-img"
+              style={{ objectPosition: 'center 65%' }}
               priority
               sizes="100vw"
             />
