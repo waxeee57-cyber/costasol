@@ -15,6 +15,7 @@ interface DateRangePickerProps {
   className?: string
   placeholder?: string
   maxDays?: number
+  id?: string
 }
 
 export function DateRangePicker({
@@ -23,6 +24,7 @@ export function DateRangePicker({
   className,
   placeholder = 'Select dates',
   maxDays = 14,
+  id,
 }: DateRangePickerProps) {
   const [open, setOpen] = useState(false)
   const [internalRange, setInternalRange] = useState<DateRange | undefined>(value)
@@ -55,6 +57,7 @@ export function DateRangePicker({
     <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
       <PopoverPrimitive.Trigger asChild>
         <button
+          id={id}
           className={cn(
             'flex h-12 w-full items-center justify-between rounded-md border border-border bg-black px-4 py-3',
             'text-sm font-sans text-left',

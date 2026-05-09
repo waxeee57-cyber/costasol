@@ -43,8 +43,9 @@ export function HeroSearch({ initialStart, initialEnd, initialPickup }: HeroSear
       <div className="flex flex-col gap-3 rounded-lg border border-border bg-black/60 p-4 backdrop-blur-sm md:flex-row md:items-end md:gap-3">
         {/* Date range */}
         <div className="flex-1 flex flex-col gap-1.5">
-          <label className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Dates</label>
+          <label htmlFor="hero-dates" className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Dates</label>
           <DateRangePicker
+            id="hero-dates"
             value={range}
             onChange={setRange}
             placeholder="Pick-up → Return"
@@ -54,9 +55,9 @@ export function HeroSearch({ initialStart, initialEnd, initialPickup }: HeroSear
 
         {/* Location */}
         <div className="flex-1 flex flex-col gap-1.5">
-          <label className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Pickup location</label>
+          <label htmlFor="hero-pickup" className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Pickup location</label>
           <Select value={pickup} onValueChange={setPickup}>
-            <SelectTrigger>
+            <SelectTrigger id="hero-pickup">
               <span className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-gold shrink-0" />
                 <SelectValue placeholder="Select location" />

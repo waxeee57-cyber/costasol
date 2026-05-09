@@ -282,7 +282,7 @@ function CarCard({ car, expanded, onExpand, onUpdate }: CarCardProps) {
                   min={1}
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white focus:outline-none focus:border-gold/50"
+                  className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold"
                 />
               </div>
               <div>
@@ -292,7 +292,7 @@ function CarCard({ car, expanded, onExpand, onUpdate }: CarCardProps) {
                   min={1}
                   value={deposit}
                   onChange={(e) => setDeposit(e.target.value)}
-                  className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white focus:outline-none focus:border-gold/50"
+                  className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold"
                 />
               </div>
             </div>
@@ -414,7 +414,7 @@ function CarCard({ car, expanded, onExpand, onUpdate }: CarCardProps) {
               onBlur={saveDesc}
               rows={4}
               placeholder="Describe the car for the listing page…"
-              className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white placeholder:text-muted/40 focus:outline-none focus:border-gold/50 resize-none"
+              className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white placeholder:text-muted/40 focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold resize-none"
             />
             {descSaving && <p className="font-sans text-xs text-muted mt-1">Saving…</p>}
             {descSaved && <p className="font-sans text-xs text-success mt-1">✓ Saved</p>}

@@ -110,6 +110,15 @@ html {
   display: none;
 }
 
+/* ─── Accessibility: keyboard focus indicator ─── */
+/* Applies to all interactive elements that don't have an explicit custom focus style.
+   Form inputs override this via higher-specificity focus:ring-* Tailwind classes. */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 /* ─── Accessibility: reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -155,6 +164,7 @@ html {
 /* ─── Effect 1: Fleet cards — 3D lift ─── */
 
 .card-3d {
+  will-change: transform;
   transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
               box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1),
               border-color 0.4s cubic-bezier(0.23, 1, 0.32, 1);
@@ -162,7 +172,6 @@ html {
 
 @media (hover: hover) {
   .card-3d:hover {
-    will-change: transform;
     transform: translateY(-8px) rotateX(2deg);
     box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4),
                 0 8px 16px rgba(200, 169, 107, 0.1);
@@ -213,6 +222,7 @@ html {
 /* Replaces transition-colors so all transitions listed explicitly */
 
 .btn-3d {
+  will-change: transform;
   transition: color 0.2s ease,
               background-color 0.2s ease,
               border-color 0.2s ease,
@@ -223,7 +233,6 @@ html {
 
 @media (hover: hover) {
   .btn-3d:hover {
-    will-change: transform;
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(200, 169, 107, 0.3);
   }
@@ -241,12 +250,12 @@ html {
 }
 
 .gallery-3d-img {
+  will-change: transform;
   transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 @media (hover: hover) {
   .gallery-3d:hover .gallery-3d-img {
-    will-change: transform;
     transform: rotateY(-2deg) scale(1.01);
   }
 }

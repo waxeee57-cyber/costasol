@@ -22,7 +22,7 @@ export function AdminNav() {
               key={l.href}
               href={l.href}
               className={cn(
-                'px-4 py-3 font-sans text-xs uppercase tracking-[0.15em] border-b-2 transition-colors',
+                'px-4 py-3.5 font-sans text-xs uppercase tracking-[0.15em] border-b-2 transition-colors',
                 isActive
                   ? 'border-gold text-white'
                   : 'border-transparent text-muted hover:text-white'

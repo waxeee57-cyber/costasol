@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-const INPUT = 'w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white placeholder:text-muted/40 focus:outline-none focus:border-gold/50'
-const SELECT = 'w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white focus:outline-none focus:border-gold/50'
+const INPUT = 'w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white placeholder:text-muted/40 focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold'
+const SELECT = 'w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold'
 const LABEL = 'block font-sans text-xs text-muted mb-1.5'
 
 export default function NewCarPage() {
@@ -153,7 +153,7 @@ export default function NewCarPage() {
               onChange={(e) => set('description', e.target.value)}
               rows={3}
               placeholder="Describe the car…"
-              className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white placeholder:text-muted/40 focus:outline-none focus:border-gold/50 resize-none"
+              className="w-full bg-black border border-border rounded-md px-3 py-3 font-sans text-sm text-white placeholder:text-muted/40 focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold resize-none"
             />
           </div>
         </div>

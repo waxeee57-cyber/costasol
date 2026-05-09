@@ -120,7 +120,7 @@ export function BookingsList({ bookings, counts, currentFilter, selectedId: init
                 </span>
               )}
               {stale && (
-                <span className="h-1.5 w-1.5 rounded-full bg-danger" />
+                <span className="h-1.5 w-1.5 rounded-full bg-danger" aria-label="Stale — follow up needed" />
               )}
             </button>
           )
@@ -152,6 +152,8 @@ export function BookingsList({ bookings, counts, currentFilter, selectedId: init
                 <button
                   className="w-full text-left px-4 py-4"
                   onClick={() => toggleExpand(b.id)}
+                  aria-expanded={isExpanded}
+                  aria-label={`${b.booking_code} — ${isExpanded ? 'collapse' : 'expand'}`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex flex-col gap-1 min-w-0">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, MessageCircle, MapPin } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
@@ -82,6 +82,17 @@ export function InquiryDrawer({
   const [submitting, setSubmitting] = useState(false)
   const [errorCount, setErrorCount] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    closeButtonRef.current?.focus()
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [open, onClose])
 
   // Date state — initialised from props, editable inside the drawer
   const todayStr = formatInTimeZone(new Date(), TZ, 'yyyy-MM-dd')
@@ -188,14 +199,19 @@ export function InquiryDrawer({
       />
 
       {/* Drawer */}
-      <div className={cn(
-        'fixed z-50 bg-graphite border-l border-border flex flex-col',
-        'bottom-0 inset-x-0 rounded-t-lg max-h-[90vh] md:inset-x-auto md:right-0 md:top-0 md:bottom-0 md:w-[480px] md:rounded-none',
-      )}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="inquiry-drawer-title"
+        className={cn(
+          'fixed z-50 bg-graphite border-l border-border flex flex-col',
+          'bottom-0 inset-x-0 rounded-t-lg max-h-[90vh] md:inset-x-auto md:right-0 md:top-0 md:bottom-0 md:w-[480px] md:rounded-none',
+        )}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-6 py-5 shrink-0">
           <div>
-            <h2 className="font-display text-xl font-medium text-white">
+            <h2 id="inquiry-drawer-title" className="font-display text-xl font-medium text-white">
               Request {car.brand} {car.model}
             </h2>
             <p className="mt-0.5 font-sans text-xs text-muted">
@@ -203,7 +219,9 @@ export function InquiryDrawer({
             </p>
           </div>
           <button
+            ref={closeButtonRef}
             onClick={onClose}
+            aria-label="Close"
             className="flex h-8 w-8 items-center justify-center text-muted hover:text-white"
           >
             <X className="h-4 w-4" />

@@ -43,6 +43,8 @@ export function Header() {
           className="flex h-10 w-10 items-center justify-center text-muted md:hidden"
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -50,6 +52,7 @@ export function Header() {
 
       {/* Mobile menu */}
       <div
+        id="mobile-nav"
         className={cn(
           'border-t border-border bg-black transition-all duration-200 md:hidden',
           open ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
