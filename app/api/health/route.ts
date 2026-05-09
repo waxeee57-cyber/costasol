@@ -1,7 +1,15 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const healthSecret = process.env.HEALTH_SECRET
+
+  // If HEALTH_SECRET is not configured, or the request header doesn't match,
+  // return a minimal response that reveals nothing about service state.
+  if (!healthSecret || req.headers.get('x-health-secret') !== healthSecret) {
+    return NextResponse.json({ ok: true })
+  }
+
   const checks: Record<string, boolean | string> = {
     supabase: false,
     resend: false,

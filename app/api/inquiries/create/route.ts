@@ -6,6 +6,7 @@ import { sendInquiryEmails } from '@/lib/email/send'
 import { formatInTimeZone } from 'date-fns-tz'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { z } from 'zod'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
 
 const schema = z.object({
   car_slug:           z.string(),
@@ -16,13 +17,23 @@ const schema = z.object({
   email:              z.string().email(),
   phone:              z.string().min(5),
   country:            z.string().min(1),
-  pickup_time:        z.string().min(1),
+  // Strict HH:MM format — prevents invalid Date construction downstream
+  pickup_time:        z.string().regex(/^\d{2}:\d{2}$/, 'pickup_time must be HH:MM'),
   message:            z.string().optional(),
   transfer_requested: z.boolean().default(false),
   transfer_address:   z.string().optional(),
 })
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 requests per IP per 15 minutes
+  const ip = getClientIp(req)
+  if (!rateLimit(ip, 5, 15 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a few minutes before trying again.' },
+      { status: 429 }
+    )
+  }
+
   const body = await req.json()
   const parsed = schema.safeParse(body)
   if (!parsed.success) {
@@ -83,7 +94,6 @@ export async function POST(req: NextRequest) {
   // Build timestamps — convert pickup date + time to UTC
   const pickupDateStr = formatInTimeZone(startDate, TZ, 'yyyy-MM-dd')
   const startUtc = new Date(`${pickupDateStr}T${pickup_time}:00`).toISOString()
-  // end is end of day in Madrid TZ
   const endDateStr = formatInTimeZone(endDate, TZ, 'yyyy-MM-dd')
   const endUtc = new Date(`${endDateStr}T${pickup_time}:00`).toISOString()
 

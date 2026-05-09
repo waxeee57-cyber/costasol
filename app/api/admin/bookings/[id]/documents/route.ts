@@ -1,19 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { getSession } from '@/lib/supabase-server'
+import { getAuthUser } from '@/lib/supabase-server'
+
+const VALID_TYPES = ['license', 'id'] as const
+type DocType = typeof VALID_TYPES[number]
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession()
-  if (!session) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+  const user = await getAuthUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
   const { id } = await params
   const formData = await req.formData()
   const file = formData.get('file') as File | null
-  const type = formData.get('type') as 'license' | 'id' | null
 
-  if (!file || !type) return NextResponse.json({ error: 'file and type required' }, { status: 400 })
+  // Runtime validate 'type' — TypeScript casts don't protect at runtime
+  const rawType = formData.get('type')
+  if (!file) return NextResponse.json({ error: 'file required' }, { status: 400 })
+  if (rawType !== 'license' && rawType !== 'id') {
+    return NextResponse.json({ error: 'type must be "license" or "id"' }, { status: 400 })
+  }
+  const type: DocType = rawType
 
-  const ext = file.name.split('.').pop() ?? 'jpg'
+  // File size limit (matching the photo upload route)
+  if (file.size > 10 * 1024 * 1024) {
+    return NextResponse.json({ error: 'File too large (max 10MB)' }, { status: 400 })
+  }
+
+  const ext = file.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') ?? 'jpg'
   const path = `bookings/${id}/${type}-${Date.now()}.${ext}`
 
   const buffer = Buffer.from(await file.arrayBuffer())

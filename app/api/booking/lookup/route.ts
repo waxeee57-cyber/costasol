@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 10 requests per IP per minute
+  const ip = getClientIp(req)
+  if (!rateLimit(ip, 10, 60 * 1000)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait before trying again.' },
+      { status: 429 }
+    )
+  }
+
   const body = await req.json()
   const { code, email } = body
 
-  if (!code || !email) {
+  if (!code || !email || typeof code !== 'string' || typeof email !== 'string') {
     return NextResponse.json({ error: 'Code and email required.' }, { status: 400 })
   }
 
@@ -24,6 +34,8 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (!booking) {
+    // Return 404 (not 403) so callers cannot distinguish "code doesn't exist"
+    // from "code exists but wrong email" — prevents oracle enumeration.
     return NextResponse.json({ error: 'Booking not found.' }, { status: 404 })
   }
 
@@ -35,7 +47,8 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (!customer || customer.email.toLowerCase() !== email.toLowerCase()) {
-    return NextResponse.json({ error: 'Email does not match this booking.' }, { status: 403 })
+    // Unified 404 — same status as "booking not found" to prevent oracle attacks
+    return NextResponse.json({ error: 'Booking not found.' }, { status: 404 })
   }
 
   // Get car info
@@ -45,7 +58,7 @@ export async function POST(req: NextRequest) {
     .eq('id', booking.car_id)
     .single()
 
-  // Return sanitized record (no admin_notes, no internal UUIDs exposed unnecessarily)
+  // Return sanitized record (no admin_notes, no internal UUIDs)
   return NextResponse.json({
     booking_code: booking.booking_code,
     status: booking.status,

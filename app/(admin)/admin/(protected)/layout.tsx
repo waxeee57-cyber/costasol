@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/supabase-server'
+import { getAuthUser } from '@/lib/supabase-server'
 import { AdminNav } from '@/components/admin/AdminNav'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession()
-  if (!session) redirect('/admin/login')
+  const user = await getAuthUser()
+  if (!user) redirect('/admin/login')
 
   return (
     <div className="min-h-screen bg-black">

@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { getSession } from '@/lib/supabase-server'
+import { getAuthUser } from '@/lib/supabase-server'
+import { z } from 'zod'
+
+const createCarSchema = z.object({
+  brand:           z.string().trim().min(1).max(100),
+  model:           z.string().trim().min(1).max(100),
+  year:            z.coerce.number().int().min(1900).max(new Date().getFullYear() + 2),
+  category:        z.enum(['sport', 'suv', 'sedan', 'convertible', 'luxury']),
+  daily_price_eur: z.coerce.number().positive(),
+  deposit_eur:     z.coerce.number().positive(),
+  transmission:    z.enum(['Automatic', 'Manual']).default('Automatic'),
+  fuel:            z.enum(['Petrol', 'Diesel', 'Electric', 'Hybrid']).default('Petrol'),
+  seats:           z.coerce.number().int().min(1).max(20).default(2),
+  license_plate:   z.string().trim().max(20).optional().nullable(),
+  description:     z.string().trim().max(5000).optional().nullable(),
+})
 
 export async function GET() {
-  const session = await getSession()
-  if (!session) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+  const user = await getAuthUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
   const { data, error } = await supabaseAdmin
     .from('cars')
@@ -16,18 +31,16 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getSession()
-  if (!session) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+  const user = await getAuthUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
   const body = await req.json()
-  const { brand, model, year, category, daily_price_eur, deposit_eur, transmission, fuel, seats, license_plate, description } = body
+  const parsed = createCarSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid request', details: parsed.error.issues }, { status: 400 })
+  }
 
-  if (!brand || !model || !year || !category || !daily_price_eur || !deposit_eur) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-  }
-  if (Number(daily_price_eur) <= 0 || Number(deposit_eur) <= 0) {
-    return NextResponse.json({ error: 'Prices must be greater than 0' }, { status: 400 })
-  }
+  const { brand, model, year, category, daily_price_eur, deposit_eur, transmission, fuel, seats, license_plate, description } = parsed.data
 
   // Generate slug with collision check
   const base = `${brand}-${model}-${year}`
@@ -53,17 +66,17 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from('cars')
     .insert({
-      brand: String(brand).trim(),
-      model: String(model).trim(),
-      year: Number(year),
+      brand,
+      model,
+      year,
       category,
-      daily_price_eur: Number(daily_price_eur),
-      deposit_eur: Number(deposit_eur),
-      transmission: transmission ?? 'Automatic',
-      fuel: fuel ?? 'Petrol',
-      seats: Number(seats ?? 2),
-      license_plate: license_plate?.trim() ?? null,
-      description: description?.trim() || null,
+      daily_price_eur,
+      deposit_eur,
+      transmission,
+      fuel,
+      seats,
+      license_plate: license_plate ?? null,
+      description: description ?? null,
       slug,
       status: 'hidden',
       photos: [],
