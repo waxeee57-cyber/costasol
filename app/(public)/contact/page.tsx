@@ -43,7 +43,6 @@ export default function ContactPage() {
                   <a href={`mailto:${email}`} className="font-sans text-sm text-white hover:text-gold transition-colors">
                     {email}
                   </a>
-                  <p className="font-sans text-xs text-muted mt-0.5">Tap to copy or open your mail app</p>
                   <p className="font-sans text-xs text-muted mt-1">We reply within 2 hours during business hours (9:00–20:00 CET).</p>
                 </div>
               </div>

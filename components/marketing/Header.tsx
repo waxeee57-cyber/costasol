@@ -40,7 +40,7 @@ export function Header() {
 
         {/* Mobile toggle */}
         <button
-          className="flex h-10 w-10 items-center justify-center text-muted md:hidden"
+          className="flex h-11 w-11 items-center justify-center text-muted md:hidden"
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}

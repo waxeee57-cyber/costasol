@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { format, differenceInCalendarDays } from 'date-fns'
 import { type DateRange } from 'react-day-picker'
-import { Users, Zap, Fuel, Gauge, Clock, AlertTriangle, MessageCircle } from 'lucide-react'
+import { Users, Zap, Fuel, Gauge, User, IdCard, AlertTriangle, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { DateRangePicker } from '@/components/booking/DateRangePicker'
 import { CostBreakdown } from '@/components/booking/CostBreakdown'
 import { MobileStickyCTA } from '@/components/booking/MobileStickyCTA'
@@ -114,17 +114,16 @@ export function CarDetailClient({
 
   const canReserve = days > 0 && isAvailable && !checking
 
-  // Touch swipe state for gallery
-  let touchStartX = 0
-  let touchEndX = 0
+  const touchStartX = useRef(0)
+  const touchEndX = useRef(0)
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX = e.changedTouches[0].screenX
+    touchStartX.current = e.changedTouches[0].screenX
   }
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX = e.changedTouches[0].screenX
-    const diff = touchStartX - touchEndX
+    touchEndX.current = e.changedTouches[0].screenX
+    const diff = touchStartX.current - touchEndX.current
     if (Math.abs(diff) > 50) {
       if (diff > 0) {
         setPhotoIdx(prev => (prev + 1) % photos.length)
@@ -165,11 +164,11 @@ export function CarDetailClient({
             <button
               onClick={() => setPhotoIdx(prev => (prev - 1 + photos.length) % photos.length)}
               className="absolute left-3 top-1/2 -translate-y-1/2 hidden md:flex
-                items-center justify-center w-10 h-10 rounded-full
+                items-center justify-center w-10 h-10 rounded-md
                 bg-black/50 text-white hover:bg-black/70 transition-colors z-10"
               aria-label="Previous image"
             >
-              ←
+              <ChevronLeft className="h-5 w-5" />
             </button>
           )}
 
@@ -178,25 +177,25 @@ export function CarDetailClient({
             <button
               onClick={() => setPhotoIdx(prev => (prev + 1) % photos.length)}
               className="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex
-                items-center justify-center w-10 h-10 rounded-full
+                items-center justify-center w-10 h-10 rounded-md
                 bg-black/50 text-white hover:bg-black/70 transition-colors z-10"
               aria-label="Next image"
             >
-              →
+              <ChevronRight className="h-5 w-5" />
             </button>
           )}
 
           {/* Image counter */}
           {photos.length > 1 && (
             <div className="absolute top-3 right-3 bg-black/60 text-white
-              text-xs px-2 py-1 rounded-full z-10">
+              font-sans text-xs px-2.5 py-1 rounded-sm z-10 tabular-nums">
               {photoIdx + 1} / {photos.length}
             </div>
           )}
 
           {/* Thumbnail strip */}
           {photos.length > 1 && (
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4">
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto scrollbar-none">
               {photos.map((p, i) => (
                 <button
                   key={i}
@@ -243,8 +242,8 @@ export function CarDetailClient({
                     { icon: Fuel, label: 'Fuel', value: car.fuel },
                     { icon: Users, label: 'Seats', value: String(car.seats) },
                     { icon: Gauge, label: 'Daily mileage', value: `${car.mileage_included_per_day} km` },
-                    { icon: Clock, label: 'Min. age', value: `${car.min_driver_age} years` },
-                    { icon: Clock, label: 'Min. license', value: `${car.min_license_years} years` },
+                    { icon: User, label: 'Min. age', value: `${car.min_driver_age} years` },
+                    { icon: IdCard, label: 'Min. license', value: `${car.min_license_years} years` },
                   ].map(({ icon: Icon, label, value }) => (
                     <div key={label} className="rounded-md border border-border bg-graphite p-4">
                       <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted mb-1">{label}</p>
