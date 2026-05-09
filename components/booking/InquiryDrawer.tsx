@@ -6,13 +6,17 @@ import { X, MessageCircle, MapPin } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { format, addDays, differenceInCalendarDays, parseISO } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+import { type DateRange } from 'react-day-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { DateRangePicker } from './DateRangePicker'
 import { CostBreakdown } from './CostBreakdown'
-import { formatDate } from '@/lib/formatters'
+import { formatDate, formatPriceDecimals, TZ } from '@/lib/formatters'
 import { buildWhatsAppLink } from '@/lib/whatsapp'
 import { cn } from '@/lib/utils'
 
@@ -72,13 +76,49 @@ export function InquiryDrawer({
   car,
   startDate,
   endDate,
-  days,
   pickupLocation,
 }: InquiryDrawerProps) {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [errorCount, setErrorCount] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Date state — initialised from props, editable inside the drawer
+  const todayStr = formatInTimeZone(new Date(), TZ, 'yyyy-MM-dd')
+  const [drawerStart, setDrawerStart] = useState(startDate)
+  const [drawerEnd, setDrawerEnd] = useState(endDate)
+  const [drawerRange, setDrawerRange] = useState<DateRange | undefined>(
+    startDate && endDate
+      ? { from: parseISO(startDate), to: parseISO(endDate) }
+      : undefined
+  )
+
+  const drawerDays =
+    drawerStart && drawerEnd
+      ? Math.max(0, differenceInCalendarDays(parseISO(drawerEnd), parseISO(drawerStart)))
+      : 0
+
+  const minEndStr = drawerStart
+    ? format(addDays(parseISO(drawerStart), 1), 'yyyy-MM-dd')
+    : todayStr
+  const maxEndStr = drawerStart
+    ? format(addDays(parseISO(drawerStart), 14), 'yyyy-MM-dd')
+    : ''
+
+  const handleMobileStartChange = (val: string) => {
+    setDrawerStart(val)
+    // Clear end if it falls outside the new valid range
+    if (drawerEnd && val) {
+      const diff = differenceInCalendarDays(parseISO(drawerEnd), parseISO(val))
+      if (diff <= 0 || diff > 14) setDrawerEnd('')
+    }
+  }
+
+  const handleDesktopRangeChange = (r: DateRange | undefined) => {
+    setDrawerRange(r)
+    setDrawerStart(r?.from ? format(r.from, 'yyyy-MM-dd') : '')
+    setDrawerEnd(r?.to ? format(r.to, 'yyyy-MM-dd') : '')
+  }
 
   const defaultPickup = PICKUP_LOCATIONS.includes(pickupLocation) ? pickupLocation : PICKUP_LOCATIONS[0]
 
@@ -93,6 +133,11 @@ export function InquiryDrawer({
   const transferRequested = watch('transfer_requested')
 
   const onSubmit = async (data: FormData) => {
+    if (!drawerStart || !drawerEnd || drawerDays <= 0) {
+      setErrorMsg('Please select pickup and return dates.')
+      return
+    }
+
     setSubmitting(true)
     setErrorMsg('')
 
@@ -103,8 +148,8 @@ export function InquiryDrawer({
         body: JSON.stringify({
           ...data,
           car_slug: car.slug,
-          start_date: startDate,
-          end_date: endDate,
+          start_date: drawerStart,
+          end_date: drawerEnd,
         }),
       })
 
@@ -128,6 +173,12 @@ export function InquiryDrawer({
 
   if (!open) return null
 
+  const headerSubtitle = drawerStart && drawerEnd
+    ? `${formatDate(drawerStart)} → ${formatDate(drawerEnd)} · ${transferRequested ? 'Custom delivery' : pickupLocation}`
+    : `Select your dates · ${transferRequested ? 'Custom delivery' : pickupLocation}`
+
+  const waMessage = `Hi, I'd like to request the ${car.brand} ${car.model}${drawerStart ? ` from ${formatDate(drawerStart)} to ${drawerEnd ? formatDate(drawerEnd) : '...'}` : ''}.`
+
   return (
     <>
       {/* Overlay */}
@@ -148,9 +199,7 @@ export function InquiryDrawer({
               Request {car.brand} {car.model}
             </h2>
             <p className="mt-0.5 font-sans text-xs text-muted">
-              {formatDate(startDate)} → {formatDate(endDate)}
-              {' · '}
-              {transferRequested ? 'Custom delivery' : pickupLocation}
+              {headerSubtitle}
             </p>
           </div>
           <button
@@ -163,15 +212,78 @@ export function InquiryDrawer({
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+
+          {/* Date selection — mobile: native inputs, desktop: calendar picker */}
+          <div className="space-y-2">
+            <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Dates</p>
+
+            {/* Mobile */}
+            <div className="md:hidden space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="start-date-mobile">Pick-up date</Label>
+                <input
+                  id="start-date-mobile"
+                  type="date"
+                  value={drawerStart}
+                  min={todayStr}
+                  onChange={(e) => handleMobileStartChange(e.target.value)}
+                  style={{ colorScheme: 'dark' }}
+                  className="w-full h-12 rounded-md border border-border bg-black px-4
+                    text-white font-sans text-sm
+                    focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="end-date-mobile">Return date</Label>
+                <input
+                  id="end-date-mobile"
+                  type="date"
+                  value={drawerEnd}
+                  min={minEndStr}
+                  max={maxEndStr || undefined}
+                  disabled={!drawerStart}
+                  onChange={(e) => setDrawerEnd(e.target.value)}
+                  style={{ colorScheme: 'dark' }}
+                  className={cn(
+                    'w-full h-12 rounded-md border border-border bg-black px-4',
+                    'text-white font-sans text-sm',
+                    'focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold',
+                    !drawerStart && 'opacity-40 cursor-not-allowed'
+                  )}
+                />
+              </div>
+              {drawerStart && drawerEnd && drawerDays > 0 && (
+                <p className="text-xs font-sans text-gold">
+                  {drawerDays} day{drawerDays !== 1 ? 's' : ''} · {formatPriceDecimals(drawerDays * car.daily_price_eur)} estimated total
+                </p>
+              )}
+            </div>
+
+            {/* Desktop */}
+            <div className="hidden md:block">
+              <DateRangePicker
+                value={drawerRange}
+                onChange={handleDesktopRangeChange}
+                maxDays={14}
+              />
+            </div>
+          </div>
+
           {/* Cost reference */}
           <div className="space-y-2">
             <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Cost reference</p>
-            <CostBreakdown
-              dailyRate={car.daily_price_eur}
-              days={days}
-              depositEur={car.deposit_eur}
-              transferRequested={transferRequested}
-            />
+            {drawerDays > 0 ? (
+              <CostBreakdown
+                dailyRate={car.daily_price_eur}
+                days={drawerDays}
+                depositEur={car.deposit_eur}
+                transferRequested={transferRequested}
+              />
+            ) : (
+              <div className="rounded-md border border-border bg-black/40 px-4 py-3">
+                <p className="font-sans text-sm text-muted">Select dates to see price estimate</p>
+              </div>
+            )}
           </div>
 
           {/* Form */}
@@ -301,7 +413,6 @@ export function InquiryDrawer({
                 )}
               />
 
-              {/* Custom address input — shown when transfer is on */}
               {transferRequested && (
                 <div className="space-y-1.5">
                   <Input
@@ -357,7 +468,7 @@ export function InquiryDrawer({
 
           {errorCount >= 2 && (
             <a
-              href={buildWhatsAppLink(`Hi, I'd like to request the ${car.brand} ${car.model} from ${formatDate(startDate)} to ${formatDate(endDate)}.`)}
+              href={buildWhatsAppLink(waMessage)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-xs font-sans text-whatsapp"
