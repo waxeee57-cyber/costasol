@@ -114,11 +114,35 @@ export function CarDetailClient({
 
   const canReserve = days > 0 && isAvailable && !checking
 
+  // Touch swipe state for gallery
+  let touchStartX = 0
+  let touchEndX = 0
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX = e.changedTouches[0].screenX
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX = e.changedTouches[0].screenX
+    const diff = touchStartX - touchEndX
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setPhotoIdx(prev => (prev + 1) % photos.length)
+      } else {
+        setPhotoIdx(prev => (prev - 1 + photos.length) % photos.length)
+      }
+    }
+  }
+
   return (
     <>
       <div className="min-h-screen bg-black pb-24 md:pb-0">
         {/* Gallery */}
-        <div className="relative h-[50vh] min-h-[320px] max-h-[520px] bg-graphite">
+        <div
+          className="relative h-[50vh] min-h-[320px] max-h-[520px] bg-graphite"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {currentPhoto ? (
             <Image
               src={currentPhoto.url}
@@ -134,6 +158,40 @@ export function CarDetailClient({
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+          {/* Previous arrow */}
+          {photos.length > 1 && (
+            <button
+              onClick={() => setPhotoIdx(prev => (prev - 1 + photos.length) % photos.length)}
+              className="absolute left-3 top-1/2 -translate-y-1/2 hidden md:flex
+                items-center justify-center w-10 h-10 rounded-full
+                bg-black/50 text-white hover:bg-black/70 transition-colors z-10"
+              aria-label="Previous image"
+            >
+              ←
+            </button>
+          )}
+
+          {/* Next arrow */}
+          {photos.length > 1 && (
+            <button
+              onClick={() => setPhotoIdx(prev => (prev + 1) % photos.length)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex
+                items-center justify-center w-10 h-10 rounded-full
+                bg-black/50 text-white hover:bg-black/70 transition-colors z-10"
+              aria-label="Next image"
+            >
+              →
+            </button>
+          )}
+
+          {/* Image counter */}
+          {photos.length > 1 && (
+            <div className="absolute top-3 right-3 bg-black/60 text-white
+              text-xs px-2 py-1 rounded-full z-10">
+              {photoIdx + 1} / {photos.length}
+            </div>
+          )}
 
           {/* Thumbnail strip */}
           {photos.length > 1 && (
@@ -270,8 +328,11 @@ export function CarDetailClient({
                   <Button
                     variant="primary"
                     className="flex-1"
-                    onClick={() => setDrawerOpen(true)}
-                    disabled={!canReserve}
+                    onClick={() => {
+                      console.log('[CarDetail] Reserve button clicked')
+                      setDrawerOpen(true)
+                    }}
+                    disabled={checking}
                   >
                     {checking ? 'Checking...' : 'Request This Car'}
                   </Button>
@@ -310,7 +371,7 @@ export function CarDetailClient({
       />
 
       {/* Inquiry drawer */}
-      {drawerOpen && days > 0 && (
+      {drawerOpen && (
         <InquiryDrawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
