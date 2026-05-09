@@ -19,7 +19,7 @@ interface PageProps {
 async function getAvailableCars(startDate?: string, endDate?: string, category?: string) {
   let query = supabaseAdmin
     .from('cars')
-    .select('slug, brand, model, year, category, daily_price_eur, deposit_eur, transmission, fuel, seats, photos')
+    .select('id, slug, brand, model, year, category, daily_price_eur, deposit_eur, transmission, fuel, seats, photos')
     .eq('status', 'available')
     .order('daily_price_eur', { ascending: false })
 
@@ -44,7 +44,7 @@ async function getAvailableCars(startDate?: string, endDate?: string, category?:
 
     const blockedIds = new Set((blockedRows ?? []).map((b: { car_id: string }) => b.car_id))
 
-    return allCars.filter((car: { slug: string; brand: string; model: string; year: number; category: string; daily_price_eur: number; deposit_eur: number; transmission: string; fuel: string; seats: number; photos: Array<{url: string; alt: string}> } & { id?: string }) => !blockedIds.has(car.id ?? ''))
+    return allCars.filter((car: { id: string; slug: string; brand: string; model: string; year: number; category: string; daily_price_eur: number; deposit_eur: number; transmission: string; fuel: string; seats: number; photos: Array<{url: string; alt: string}> }) => !blockedIds.has(car.id))
   }
 
   return allCars

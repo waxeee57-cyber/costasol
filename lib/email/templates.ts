@@ -4,55 +4,54 @@ import { parseISO } from 'date-fns'
 
 const BRAND_GOLD = '#C8A96B'
 const BRAND_DARK = '#0F0F10'
-const BG_CREAM = '#f5f3ef'
-const TEXT_DARK = '#1a1a1a'
-const TEXT_MUTED = '#888888'
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://drivecostasol.com'
 
 function firstName(fullName: string): string {
-  return fullName.split(' ')[0] || fullName
+  return fullName.trim().split(' ')[0] || fullName
 }
 
-function shortDate(isoStr: string): string {
+export function shortDate(isoStr: string): string {
   return formatInTimeZone(parseISO(isoStr), TZ, 'EEE d MMM')
 }
 
 function getWhatsAppLink(): string | null {
   const num = process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP
-  if (!num || num.startsWith('36')) return null
+  if (!num || num.replace(/\D/g, '').startsWith('36')) return null
   return `https://wa.me/${num}`
 }
 
 function layout(content: string): string {
   return `<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
-<body style="margin:0;padding:0;background:${BG_CREAM};font-family:Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0">
+<body style="margin:0;padding:0;background:#f0ede8;font-family:Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0ede8;">
   <tr><td align="center" style="padding:32px 16px;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+    <table width="100%" cellpadding="0" cellspacing="0"
+      style="max-width:560px;border-radius:8px;overflow:hidden;border:1px solid #e0dbd0;">
 
       <tr>
         <td style="background:${BRAND_DARK};padding:28px 36px;border-bottom:3px solid ${BRAND_GOLD};">
-          <p style="margin:0;font-size:10px;letter-spacing:4px;text-transform:uppercase;
-            color:${BRAND_GOLD};font-family:Arial,sans-serif;">COSTASOL CAR RENT</p>
+          <p style="margin:0 0 4px;font-size:10px;letter-spacing:4px;text-transform:uppercase;
+            color:${BRAND_GOLD};font-family:Arial,sans-serif;font-weight:700;">COSTASOL CAR RENT</p>
+          <p style="margin:0;font-size:11px;color:#666;font-family:Arial,sans-serif;letter-spacing:0.5px;">
+            Costa del Sol, Spain</p>
         </td>
       </tr>
 
       <tr>
-        <td style="background:#ffffff;padding:36px;">
+        <td style="background:#ffffff;padding:36px 36px 28px;">
           ${content}
         </td>
       </tr>
 
       <tr>
-        <td style="background:${BG_CREAM};padding:20px 36px;text-align:center;
-          border-top:1px solid #e8e0d0;">
-          <p style="margin:0 0 6px;font-size:12px;color:#999;font-family:Arial,sans-serif;">
-            CostaSol Car Rent &nbsp;·&nbsp; Costa del Sol, Spain
+        <td style="background:#f8f5f0;padding:20px 36px;border-top:1px solid #ede8e0;text-align:center;">
+          <p style="margin:0 0 6px;font-size:12px;color:#aaa;font-family:Arial,sans-serif;">
+            CostaSol Car Rent · Costa del Sol, Spain
           </p>
           <p style="margin:0;font-size:12px;font-family:Arial,sans-serif;">
             <a href="mailto:rent@drivecostasol.com"
@@ -70,33 +69,45 @@ function layout(content: string): string {
 
 function btn(text: string, href: string): string {
   return `
-<table cellpadding="0" cellspacing="0" style="margin:28px 0 0;">
+<table cellpadding="0" cellspacing="0" style="margin:28px 0 4px;">
   <tr>
     <td style="background:${BRAND_GOLD};border-radius:4px;">
-      <a href="${href}" style="display:block;padding:14px 32px;
-        color:${BRAND_DARK};font-size:13px;font-weight:700;
-        text-decoration:none;letter-spacing:1.5px;
+      <a href="${href}" style="display:block;padding:14px 32px;color:${BRAND_DARK};
+        font-size:12px;font-weight:700;text-decoration:none;letter-spacing:2px;
         text-transform:uppercase;font-family:Arial,sans-serif;">${text}</a>
     </td>
   </tr>
 </table>`
 }
 
-const divider = `<hr style="border:none;border-top:1px solid #f0ece4;margin:24px 0;">`
+const divider = `<div style="border-top:1px solid #f0ece4;margin:24px 0;"></div>`
 
 function section(label: string): string {
-  return `<p style="margin:0 0 10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;
-    color:${TEXT_MUTED};font-family:Arial,sans-serif;">${label}</p>`
+  return `<p style="margin:0 0 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+    color:${BRAND_GOLD};font-family:Arial,sans-serif;font-weight:700;">${label}</p>`
 }
 
 function row(label: string, value: string): string {
   return `
 <tr>
-  <td style="padding:7px 0;font-size:13px;color:${TEXT_MUTED};
-    font-family:Arial,sans-serif;width:140px;vertical-align:top;">${label}</td>
-  <td style="padding:7px 0;font-size:13px;color:${TEXT_DARK};
+  <td style="padding:6px 0;font-size:13px;color:#888;
+    font-family:Arial,sans-serif;width:130px;vertical-align:top;">${label}</td>
+  <td style="padding:6px 0;font-size:13px;color:#1a1a1a;
     font-weight:600;font-family:Arial,sans-serif;vertical-align:top;">${value}</td>
 </tr>`
+}
+
+function transferWarning(address: string): string {
+  return `
+<div style="background:#fdf3e3;border-left:3px solid ${BRAND_GOLD};
+  padding:12px 16px;margin:16px 0;border-radius:0 4px 4px 0;">
+  <p style="margin:0;font-size:13px;color:#7a5c0a;font-family:Arial,sans-serif;font-weight:600;">
+    ⚠ Custom delivery requested
+  </p>
+  <p style="margin:4px 0 0;font-size:13px;color:#7a5c0a;font-family:Arial,sans-serif;">
+    ${address} — set the transfer fee before confirming.
+  </p>
+</div>`
 }
 
 // ─── TEMPLATE 1: Customer inquiry confirmation ────────────────────────────────
@@ -121,10 +132,9 @@ export function inquiryConfirmationEmail(data: {
   const dailyRate = data.days > 0 ? data.totalEur / data.days : data.totalEur
 
   const content = `
-<h1 style="margin:0 0 16px;font-size:22px;color:${TEXT_DARK};font-weight:700;
+<h1 style="margin:0 0 16px;font-size:22px;color:#1a1a1a;font-weight:700;
   font-family:Arial,sans-serif;">Hey ${name},</h1>
-<p style="margin:0;font-size:15px;color:${TEXT_DARK};line-height:1.65;
-  font-family:Arial,sans-serif;">
+<p style="margin:0;font-size:15px;color:#1a1a1a;line-height:1.65;font-family:Arial,sans-serif;">
   We've received your request for the <strong>${data.carLabel}</strong> and we'll
   be in touch personally to confirm — usually within the hour during business hours.
 </p>
@@ -138,32 +148,31 @@ ${section('Your request')}
   ${row('Duration', `${data.days} day${data.days !== 1 ? 's' : ''}`)}
   ${row('Pickup', data.pickupLocation)}
   ${row('Pickup time', data.pickupTime)}
-  ${data.transferRequested && data.transferAddress ? row('Custom delivery', data.transferAddress) : ''}
+  ${data.transferRequested && data.transferAddress ? row('Delivery to', data.transferAddress) : ''}
 </table>
 
 ${section('Estimated cost')}
 <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 16px;">
   ${row('Daily rate', formatPriceDecimals(dailyRate))}
   ${row('Total', formatPriceDecimals(data.totalEur))}
-  ${row('Deposit at pickup', formatPriceDecimals(data.depositEur))}
-  ${data.transferRequested ? row('Custom delivery fee', 'To be confirmed') : ''}
+  ${row('Deposit at pickup', `${formatPriceDecimals(data.depositEur)} (refundable)`)}
+  ${data.transferRequested ? row('Transfer fee', 'To be confirmed') : ''}
+  ${row('Payment', 'In person at pickup')}
 </table>
 
 ${divider}
 
-<p style="margin:0;font-size:14px;color:${TEXT_DARK};line-height:1.65;
-  font-family:Arial,sans-serif;">
+<p style="margin:0;font-size:14px;color:#1a1a1a;line-height:1.65;font-family:Arial,sans-serif;">
   In the meantime, you can track your reservation here:
 </p>
 ${btn('View My Reservation', `${SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
 
-<p style="margin:28px 0 0;font-size:14px;color:${TEXT_MUTED};line-height:1.65;
-  font-family:Arial,sans-serif;">
+<p style="margin:28px 0 0;font-size:14px;color:#888;line-height:1.65;font-family:Arial,sans-serif;">
   Got a question? Just reply to this email${waLink
     ? ` or <a href="${waLink}" style="color:${BRAND_GOLD};text-decoration:none;">message us on WhatsApp</a>`
     : ''} — we're happy to help.
 </p>
-<p style="margin:16px 0 0;font-size:14px;color:${TEXT_DARK};font-family:Arial,sans-serif;">
+<p style="margin:16px 0 0;font-size:14px;color:#1a1a1a;font-family:Arial,sans-serif;">
   The CostaSol Team
 </p>`
 
@@ -193,9 +202,7 @@ export function inquiryAdminAlertEmail(data: {
   const adminUrl = `${SITE_URL}/admin/bookings`
   const isTransfer = data.transferRequested && data.transferAddress
 
-  const custPhone = data.customerPhone
-    ?.replace(/[\s\-\(\)]/g, '')
-    .replace(/^\+/, '')
+  const custPhone = data.customerPhone?.replace(/[\s\-\(\)]/g, '').replace(/^\+/, '')
   const custWaUrl = custPhone
     ? `https://wa.me/${custPhone}?text=${encodeURIComponent(`Hi ${firstName(data.customerName)},`)}`
     : null
@@ -204,10 +211,10 @@ export function inquiryAdminAlertEmail(data: {
     : data.customerName
 
   const content = `
-<p style="margin:0 0 6px;font-size:16px;color:${TEXT_DARK};font-weight:600;
-  font-family:Arial,sans-serif;">New reservation request just came in.</p>
-<p style="margin:0;font-size:13px;color:${TEXT_MUTED};font-family:Arial,sans-serif;">
-  Reference: <strong style="color:${TEXT_DARK};">${data.bookingCode}</strong>
+<p style="margin:0 0 6px;font-size:16px;color:#1a1a1a;font-weight:600;font-family:Arial,sans-serif;">
+  New reservation request.</p>
+<p style="margin:0;font-size:13px;color:#888;font-family:Arial,sans-serif;">
+  Reference: <strong style="color:#1a1a1a;">${data.bookingCode}</strong>
 </p>
 
 ${divider}
@@ -224,32 +231,22 @@ ${section('Booking')}
 <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 16px;">
   ${row('Vehicle', data.carLabel)}
   ${row('Dates', formatDateRange(data.startAt, data.endAt))}
-  ${row('Duration', `${data.days} day${data.days !== 1 ? 's' : ''}`)}
-  ${row('Pickup', data.pickupLocation)}
-  ${row('Pickup time', data.pickupTime)}
+  ${row('Pickup', `${data.pickupLocation} · ${data.pickupTime}`)}
   ${row('Total', formatPriceDecimals(data.totalEur))}
   ${row('Deposit', formatPriceDecimals(data.depositEur))}
-  ${isTransfer ? row('⚠ Custom delivery', `${data.transferAddress} — set fee before confirming`) : ''}
 </table>
+
+${isTransfer ? transferWarning(data.transferAddress!) : ''}
 
 ${data.customerMessage ? `
 ${divider}
 ${section('Their message')}
-<p style="margin:0;font-size:14px;color:${TEXT_DARK};line-height:1.65;font-style:italic;
-  font-family:Arial,sans-serif;">"${data.customerMessage}"</p>
-` : ''}
-
-${isTransfer ? `
-${divider}
-<p style="margin:0;font-size:13px;color:#c0392b;line-height:1.6;font-weight:600;
-  font-family:Arial,sans-serif;">
-  ⚠ This booking requires a custom delivery. Set the transfer fee in the admin panel before confirming.
-</p>
+<p style="margin:0;font-size:14px;color:#1a1a1a;line-height:1.65;font-style:italic;font-family:Arial,sans-serif;">"${data.customerMessage}"</p>
 ` : ''}
 
 ${divider}
 
-${btn('Open in Admin Panel', adminUrl)}`
+${btn('Open Admin Panel', adminUrl)}`
 
   return layout(content)
 }
@@ -276,12 +273,11 @@ export function bookingConfirmedEmail(data: {
   const waLink = getWhatsAppLink()
 
   const content = `
-<h1 style="margin:0 0 16px;font-size:22px;color:${TEXT_DARK};font-weight:700;
+<h1 style="margin:0 0 16px;font-size:22px;color:#1a1a1a;font-weight:700;
   font-family:Arial,sans-serif;">Great news, ${name}.</h1>
-<p style="margin:0;font-size:15px;color:${TEXT_DARK};line-height:1.65;
-  font-family:Arial,sans-serif;">
-  Your reservation for the <strong>${data.carLabel}</strong> is confirmed. We're
-  looking forward to seeing you on ${formatDate(data.startAt)}.
+<p style="margin:0;font-size:15px;color:#1a1a1a;line-height:1.65;font-family:Arial,sans-serif;">
+  Your reservation for the <strong>${data.carLabel}</strong> is confirmed. We're looking
+  forward to seeing you on ${formatDate(data.startAt)}.
 </p>
 
 ${divider}
@@ -292,16 +288,16 @@ ${section('Your pickup')}
   ${row('Time', data.pickupTime)}
   ${row('Location', data.pickupLocation)}
   ${data.transferRequested && data.transferAddress
-    ? row('Delivery address', data.transferAddress)
+    ? row('Delivery', `We'll come to ${data.transferAddress}`)
     : ''}
 </table>
 
 ${section('What to bring')}
-<ul style="margin:0 0 20px;padding:0 0 0 18px;font-size:14px;color:${TEXT_DARK};
+<ul style="margin:0 0 20px;padding:0 0 0 18px;font-size:14px;color:#1a1a1a;
   line-height:1.9;font-family:Arial,sans-serif;">
   <li>Valid driving licence</li>
   <li>Passport or national ID</li>
-  <li>Payment for the balance and deposit (in person at pickup)</li>
+  <li>Payment for balance and deposit (in person at pickup)</li>
 </ul>
 
 ${section('Payment at pickup')}
@@ -320,13 +316,12 @@ ${divider}
 
 ${btn('View My Reservation', `${SITE_URL}/booking/${data.bookingCode}?email=${encodeURIComponent(data.customerEmail)}`)}
 
-<p style="margin:28px 0 0;font-size:14px;color:${TEXT_MUTED};line-height:1.65;
-  font-family:Arial,sans-serif;">
-  Any questions before pickup? Just reply here${waLink
+<p style="margin:28px 0 0;font-size:14px;color:#888;line-height:1.65;font-family:Arial,sans-serif;">
+  Any questions before pickup? Just reply to this email${waLink
     ? ` or <a href="${waLink}" style="color:${BRAND_GOLD};text-decoration:none;">message us on WhatsApp</a>`
     : ''} — we'll get back to you straight away.
 </p>
-<p style="margin:16px 0 0;font-size:14px;color:${TEXT_DARK};font-family:Arial,sans-serif;">
+<p style="margin:16px 0 0;font-size:14px;color:#1a1a1a;font-family:Arial,sans-serif;">
   The CostaSol Team
 </p>`
 
@@ -348,10 +343,10 @@ export function bookingConfirmedAdminEmail(data: {
   const adminUrl = `${SITE_URL}/admin/bookings`
 
   const content = `
-<p style="margin:0 0 6px;font-size:16px;color:${TEXT_DARK};font-weight:600;
-  font-family:Arial,sans-serif;">You confirmed this reservation.</p>
-<p style="margin:0;font-size:13px;color:${TEXT_MUTED};font-family:Arial,sans-serif;">
-  Reference: <strong style="color:${TEXT_DARK};">${data.bookingCode}</strong>
+<p style="margin:0 0 6px;font-size:16px;color:#1a1a1a;font-weight:600;font-family:Arial,sans-serif;">
+  Booking confirmed.</p>
+<p style="margin:0;font-size:13px;color:#888;font-family:Arial,sans-serif;">
+  Reference: <strong style="color:#1a1a1a;">${data.bookingCode}</strong>
 </p>
 
 ${divider}
@@ -366,13 +361,13 @@ ${divider}
   ${row('Return', formatDate(data.endAt))}
 </table>
 
-<p style="margin:0;font-size:13px;color:${TEXT_MUTED};font-family:Arial,sans-serif;">
+<p style="margin:0;font-size:13px;color:#888;font-family:Arial,sans-serif;">
   Confirmation email sent to ${data.customerEmail}.
 </p>
 
 ${divider}
 
-${btn('Open in Admin Panel', adminUrl)}`
+${btn('Open Admin Panel', adminUrl)}`
 
   return layout(content)
 }
@@ -389,29 +384,24 @@ export function bookingCancelledEmail(data: {
   const name = firstName(data.customerName)
 
   const content = `
-<h1 style="margin:0 0 16px;font-size:22px;color:${TEXT_DARK};font-weight:700;
+<h1 style="margin:0 0 16px;font-size:22px;color:#1a1a1a;font-weight:700;
   font-family:Arial,sans-serif;">Hi ${name},</h1>
-<p style="margin:0;font-size:15px;color:${TEXT_DARK};line-height:1.65;
-  font-family:Arial,sans-serif;">
+<p style="margin:0;font-size:15px;color:#1a1a1a;line-height:1.65;font-family:Arial,sans-serif;">
   Your reservation for the <strong>${data.carLabel}</strong> (${data.bookingCode}) has
   been cancelled.
 </p>
 
 ${divider}
 
-<p style="margin:0 0 20px;font-size:14px;color:${TEXT_MUTED};line-height:1.65;
-  font-family:Arial,sans-serif;">
-  If you'd like to make a new reservation or have any questions, please get in
-  touch — we're happy to help.
+<p style="margin:0 0 20px;font-size:14px;color:#888;line-height:1.65;font-family:Arial,sans-serif;">
+  If you'd like to make a new reservation or have any questions, we're here to help.
 </p>
 
 ${btn('Get in Touch', 'mailto:rent@drivecostasol.com')}
 
-<p style="margin:28px 0 0;font-size:14px;color:${TEXT_DARK};font-family:Arial,sans-serif;">
+<p style="margin:28px 0 0;font-size:14px;color:#1a1a1a;font-family:Arial,sans-serif;">
   The CostaSol Team
 </p>`
 
   return layout(content)
 }
-
-export { shortDate }
