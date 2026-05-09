@@ -107,9 +107,9 @@ export function ManualBookingForm({ cars }: { cars: Car[] }) {
     <form onSubmit={handleSubmit} className="space-y-5 rounded-lg border border-border bg-graphite p-6">
       {/* Car */}
       <div className="space-y-1.5">
-        <Label>Car</Label>
+        <Label htmlFor="manual-car">Car</Label>
         <Select value={carId} onValueChange={setCarId}>
-          <SelectTrigger><SelectValue placeholder="Select car" /></SelectTrigger>
+          <SelectTrigger id="manual-car"><SelectValue placeholder="Select car" /></SelectTrigger>
           <SelectContent>
             {cars.map((c) => (
               <SelectItem key={c.id} value={c.id}>
@@ -156,18 +156,18 @@ export function ManualBookingForm({ cars }: { cars: Car[] }) {
       {/* Pickup details */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label>Pickup location</Label>
+          <Label htmlFor="manual-pickup-loc">Pickup location</Label>
           <Select value={pickupLocation} onValueChange={setPickupLocation}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger id="manual-pickup-loc"><SelectValue /></SelectTrigger>
             <SelectContent>
               {PICKUP_LOCATIONS.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1.5">
-          <Label>Pickup time</Label>
+          <Label htmlFor="manual-pickup-time">Pickup time</Label>
           <Select value={pickupTime} onValueChange={setPickupTime}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger id="manual-pickup-time"><SelectValue /></SelectTrigger>
             <SelectContent>
               {PICKUP_TIMES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
             </SelectContent>
@@ -178,28 +178,28 @@ export function ManualBookingForm({ cars }: { cars: Car[] }) {
       {/* Customer */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label>Full name</Label>
-          <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" required />
+          <Label htmlFor="manual-name">Full name</Label>
+          <Input id="manual-name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" required />
         </div>
         <div className="space-y-1.5">
-          <Label>Email</Label>
-          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" required />
+          <Label htmlFor="manual-email">Email</Label>
+          <Input id="manual-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" required />
         </div>
         <div className="space-y-1.5">
-          <Label>Phone</Label>
-          <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+44 7700 000000" />
+          <Label htmlFor="manual-phone">Phone</Label>
+          <Input id="manual-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+44 7700 000000" />
         </div>
         <div className="space-y-1.5">
-          <Label>Country</Label>
-          <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="United Kingdom" />
+          <Label htmlFor="manual-country">Country</Label>
+          <Input id="manual-country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="United Kingdom" />
         </div>
       </div>
 
       {/* Initial status */}
       <div className="space-y-1.5">
-        <Label>Initial status</Label>
+        <Label htmlFor="manual-status">Initial status</Label>
         <Select value={initialStatus} onValueChange={(v) => setInitialStatus(v as 'inquiry' | 'confirmed')}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectTrigger id="manual-status"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="inquiry">Inquiry (default — confirm later)</SelectItem>
             <SelectItem value="confirmed">Confirmed — skip inquiry phase</SelectItem>

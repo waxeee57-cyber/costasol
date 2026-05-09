@@ -74,23 +74,23 @@ export default function NewCarPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={LABEL}>Brand</label>
-              <input required value={form.brand} onChange={(e) => set('brand', e.target.value)} placeholder="Lamborghini" className={INPUT} />
+              <label htmlFor="car-brand" className={LABEL}>Brand</label>
+              <input id="car-brand" required value={form.brand} onChange={(e) => set('brand', e.target.value)} placeholder="Lamborghini" className={INPUT} />
             </div>
             <div>
-              <label className={LABEL}>Model</label>
-              <input required value={form.model} onChange={(e) => set('model', e.target.value)} placeholder="Huracán" className={INPUT} />
+              <label htmlFor="car-model" className={LABEL}>Model</label>
+              <input id="car-model" required value={form.model} onChange={(e) => set('model', e.target.value)} placeholder="Huracán" className={INPUT} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={LABEL}>Year</label>
-              <input required type="number" min={2000} max={2035} value={form.year} onChange={(e) => set('year', e.target.value)} className={INPUT} />
+              <label htmlFor="car-year" className={LABEL}>Year</label>
+              <input id="car-year" required type="number" min={2000} max={2035} value={form.year} onChange={(e) => set('year', e.target.value)} className={INPUT} />
             </div>
             <div>
-              <label className={LABEL}>Category</label>
-              <select value={form.category} onChange={(e) => set('category', e.target.value)} className={SELECT}>
+              <label htmlFor="car-category" className={LABEL}>Category</label>
+              <select id="car-category" value={form.category} onChange={(e) => set('category', e.target.value)} className={SELECT}>
                 <option value="sport">Sport</option>
                 <option value="suv">SUV</option>
                 <option value="sedan">Sedan</option>
@@ -102,12 +102,12 @@ export default function NewCarPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={LABEL}>Daily price (€)</label>
-              <input required type="number" min={1} value={form.daily_price_eur} onChange={(e) => set('daily_price_eur', e.target.value)} placeholder="1200" className={INPUT} />
+              <label htmlFor="car-price" className={LABEL}>Daily price (€)</label>
+              <input id="car-price" required type="number" min={1} value={form.daily_price_eur} onChange={(e) => set('daily_price_eur', e.target.value)} placeholder="1200" className={INPUT} />
             </div>
             <div>
-              <label className={LABEL}>Deposit (€)</label>
-              <input required type="number" min={1} value={form.deposit_eur} onChange={(e) => set('deposit_eur', e.target.value)} placeholder="15000" className={INPUT} />
+              <label htmlFor="car-deposit" className={LABEL}>Deposit (€)</label>
+              <input id="car-deposit" required type="number" min={1} value={form.deposit_eur} onChange={(e) => set('deposit_eur', e.target.value)} placeholder="15000" className={INPUT} />
             </div>
           </div>
         </div>
@@ -118,15 +118,15 @@ export default function NewCarPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={LABEL}>Transmission</label>
-              <select value={form.transmission} onChange={(e) => set('transmission', e.target.value)} className={SELECT}>
+              <label htmlFor="car-transmission" className={LABEL}>Transmission</label>
+              <select id="car-transmission" value={form.transmission} onChange={(e) => set('transmission', e.target.value)} className={SELECT}>
                 <option>Automatic</option>
                 <option>Manual</option>
               </select>
             </div>
             <div>
-              <label className={LABEL}>Fuel</label>
-              <select value={form.fuel} onChange={(e) => set('fuel', e.target.value)} className={SELECT}>
+              <label htmlFor="car-fuel" className={LABEL}>Fuel</label>
+              <select id="car-fuel" value={form.fuel} onChange={(e) => set('fuel', e.target.value)} className={SELECT}>
                 <option>Petrol</option>
                 <option>Diesel</option>
                 <option>Hybrid</option>
@@ -137,18 +137,19 @@ export default function NewCarPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={LABEL}>Seats</label>
-              <input type="number" min={1} max={9} value={form.seats} onChange={(e) => set('seats', e.target.value)} className={INPUT} />
+              <label htmlFor="car-seats" className={LABEL}>Seats</label>
+              <input id="car-seats" type="number" min={1} max={9} value={form.seats} onChange={(e) => set('seats', e.target.value)} className={INPUT} />
             </div>
             <div>
-              <label className={LABEL}>License plate</label>
-              <input value={form.license_plate} onChange={(e) => set('license_plate', e.target.value)} placeholder="1234 ABC" className={INPUT} />
+              <label htmlFor="car-plate" className={LABEL}>License plate</label>
+              <input id="car-plate" value={form.license_plate} onChange={(e) => set('license_plate', e.target.value)} placeholder="1234 ABC" className={INPUT} />
             </div>
           </div>
 
           <div>
-            <label className={LABEL}>Description</label>
+            <label htmlFor="car-description" className={LABEL}>Description</label>
             <textarea
+              id="car-description"
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
               rows={3}

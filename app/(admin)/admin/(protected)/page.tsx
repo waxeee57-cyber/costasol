@@ -76,13 +76,13 @@ export default async function AdminDashboardPage() {
       <div className="flex flex-col gap-2 sm:flex-row">
         <Link
           href="/admin/bookings"
-          className="flex items-center justify-center rounded-md border border-gold/40 px-4 py-2.5 text-xs font-sans uppercase tracking-[0.15em] text-gold hover:bg-gold hover:text-black transition-colors"
+          className="flex items-center justify-center min-h-[44px] rounded-md border border-gold/40 px-4 py-2 text-xs font-sans uppercase tracking-[0.15em] text-gold hover:bg-gold hover:text-black transition-colors"
         >
           View all bookings
         </Link>
         <Link
           href="/admin/cars"
-          className="flex items-center justify-center rounded-md border border-border px-4 py-2.5 text-xs font-sans uppercase tracking-[0.15em] text-muted hover:border-gold/30 hover:text-white transition-colors"
+          className="flex items-center justify-center min-h-[44px] rounded-md border border-border px-4 py-2 text-xs font-sans uppercase tracking-[0.15em] text-muted hover:border-gold/30 hover:text-white transition-colors"
         >
           Manage fleet
         </Link>

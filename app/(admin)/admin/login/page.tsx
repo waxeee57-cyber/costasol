@@ -34,7 +34,6 @@ export default function AdminLoginPage() {
       return
     }
 
-    console.log('[AdminLogin] login successful, navigating to /admin/bookings')
     router.refresh()
     router.push('/admin/bookings')
   }

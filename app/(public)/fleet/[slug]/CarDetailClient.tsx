@@ -328,10 +328,7 @@ export function CarDetailClient({
                   <Button
                     variant="primary"
                     className="flex-1"
-                    onClick={() => {
-                      console.log('[CarDetail] Reserve button clicked')
-                      setDrawerOpen(true)
-                    }}
+                    onClick={() => setDrawerOpen(true)}
                     disabled={checking}
                   >
                     {checking ? 'Checking...' : 'Request This Car'}
