@@ -34,7 +34,7 @@ export function CodeEmailLookup({ initialCode, title = 'Look up your reservation
         router.push(`/booking/${code.toUpperCase()}?email=${encodeURIComponent(email)}`)
       } else {
         const data = await res.json()
-        setError(data.error ?? 'Booking not found.')
+        setError(data.error ?? 'No reservation found with those details. Double-check your booking code or contact us.')
       }
     } catch {
       setError('Connection error. Please try again.')

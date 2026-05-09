@@ -1,24 +1,27 @@
 import { MapPin, Mail } from 'lucide-react'
 import { CodeEmailLookup } from '@/components/booking/CodeEmailLookup'
+import { isWhatsAppConfigured } from '@/lib/whatsapp'
+import type { Metadata } from 'next'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Contact',
+  description: 'Get in touch with CostaSol Car Rent. We deliver to your hotel in Marbella, Puerto Banús, Estepona, and across the Costa del Sol.',
 }
 
 const PICKUP_LOCATIONS = [
-  { name: 'Alicante', note: 'Free delivery' },
-  { name: 'Almeria', note: 'Free delivery' },
-  { name: 'Marbella', note: 'Free delivery' },
-  { name: 'Puerto Banús', note: 'Free delivery' },
-  { name: 'Málaga Airport', note: 'Free delivery' },
-  { name: 'Estepona', note: 'Free delivery' },
+  { name: 'Marbella', note: 'Delivery available — contact us' },
+  { name: 'Puerto Banús', note: 'Delivery available — contact us' },
+  { name: 'Málaga Airport', note: 'Delivery available — contact us' },
+  { name: 'Estepona', note: 'Delivery available — contact us' },
+  { name: 'Alicante', note: 'Delivery available — contact us' },
+  { name: 'Almeria', note: 'Delivery available — contact us' },
   { name: 'San Juan de los Terreros', note: 'Free delivery within 25 km' },
 ]
 
 export default function ContactPage() {
   const email = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? 'rent@drivecostasol.com'
   const phone = process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? ''
-  const wa = process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP ?? ''
+  const waConfigured = isWhatsAppConfigured()
 
   return (
     <div className="min-h-screen bg-black py-24">
@@ -43,7 +46,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {wa && (
+              {waConfigured && (
                 <div className="flex items-start gap-4">
                   <div className="h-5 w-5 shrink-0 mt-0.5 flex items-center justify-center">
                     <div className="h-2 w-2 rounded-full bg-whatsapp" />
@@ -51,7 +54,7 @@ export default function ContactPage() {
                   <div>
                     <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-muted mb-2">WhatsApp</p>
                     <a
-                      href={`https://wa.me/${wa}`}
+                      href={`https://wa.me/${process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP ?? ''}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 h-12 rounded-md bg-whatsapp px-6 text-sm font-sans font-medium text-white hover:opacity-90 transition-opacity"
@@ -76,9 +79,6 @@ export default function ContactPage() {
                     </div>
                   </div>
                 ))}
-                <p className="font-sans text-xs text-muted mt-2 pl-6">
-                  Outside 25 km: contact us to arrange.
-                </p>
               </div>
             </div>
           </div>

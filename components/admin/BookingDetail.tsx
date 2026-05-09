@@ -5,7 +5,7 @@ import { Phone, Copy, Check, MessageCircle, AlertTriangle, Info } from 'lucide-r
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { formatDateRange, formatDateTime, formatPriceDecimals, formatTime } from '@/lib/formatters'
-import { buildBookingLink } from '@/lib/whatsapp'
+import { buildBookingLink, buildWhatsAppLink } from '@/lib/whatsapp'
 import { cn } from '@/lib/utils'
 
 type BookingStatus = 'inquiry' | 'confirmed' | 'picked_up' | 'returned' | 'completed' | 'cancelled'
@@ -82,6 +82,26 @@ export function BookingDetail({ booking: b, onStatusChange }: BookingDetailProps
   const [feeSaved, setFeeSaved] = useState(b.transfer_fee_eur !== null)
 
   const waLink = buildBookingLink({ customerName: b.customer?.full_name ?? '', bookingCode: b.booking_code })
+  const firstName = b.customer?.full_name?.split(' ')[0] ?? 'there'
+  const carLabel = b.car ? `${b.car.brand} ${b.car.model}` : 'the car'
+  const waTemplates = [
+    {
+      label: 'Confirm',
+      msg: `Hi ${firstName}, your ${carLabel} booking (${b.booking_code}) is confirmed. We will deliver to ${b.pickup_location} on ${b.start_at.slice(0, 10)}. Please have your licence and passport ready at pickup.`,
+    },
+    {
+      label: 'Reminder',
+      msg: `Hi ${firstName}, just a reminder that your ${carLabel} pickup is tomorrow at ${b.pickup_location}. Any questions, let us know!`,
+    },
+    {
+      label: 'Docs',
+      msg: `Hi ${firstName}, please send us a photo of your driver's licence and passport before pickup so we can prepare the paperwork. Thank you!`,
+    },
+    {
+      label: 'Return',
+      msg: `Hi ${firstName}, thank you for returning the ${carLabel}. Your deposit will be refunded within 3 working days. Hope you enjoyed the drive!`,
+    },
+  ]
 
   const transition = async (action: string, body?: Record<string, unknown>) => {
     setLoading(true)
@@ -161,6 +181,12 @@ export function BookingDetail({ booking: b, onStatusChange }: BookingDetailProps
       {/* Section 1: Customer & Trip */}
       <Section title="Customer & Trip">
         <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-sans text-xs font-medium tracking-widest text-muted">Booking code</span>
+            <span className="font-sans text-sm font-medium text-white tracking-widest">{b.booking_code}</span>
+            <CopyButton value={b.booking_code} />
+          </div>
+
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div>
               <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted mb-0.5">Name</p>
@@ -202,8 +228,26 @@ export function BookingDetail({ booking: b, onStatusChange }: BookingDetailProps
             className="inline-flex items-center gap-2 rounded-md bg-whatsapp px-4 py-2 text-xs font-sans font-medium text-white hover:opacity-90 transition-opacity"
           >
             <MessageCircle className="h-3.5 w-3.5 fill-white stroke-none" />
-            WhatsApp {b.customer?.full_name?.split(' ')[0]}
+            WhatsApp {firstName}
           </a>
+
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-sans uppercase tracking-[0.15em] text-muted">Quick replies</p>
+            <div className="flex flex-wrap gap-2">
+              {waTemplates.map(({ label, msg }) => (
+                <a
+                  key={label}
+                  href={buildWhatsAppLink(msg)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-sm border border-border px-2.5 py-1.5 text-[10px] font-sans uppercase tracking-[0.1em] text-muted hover:border-whatsapp/50 hover:text-white transition-colors"
+                >
+                  <MessageCircle className="h-3 w-3" />
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 gap-2 pt-1 text-sm font-sans">
             <div>

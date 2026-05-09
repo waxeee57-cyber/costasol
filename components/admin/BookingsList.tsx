@@ -53,6 +53,12 @@ function isStaleInquiry(booking: BookingRow): boolean {
   return Date.now() - created.getTime() > 2 * 60 * 60 * 1000
 }
 
+function isNewInquiry(booking: BookingRow): boolean {
+  if (booking.status !== 'inquiry') return false
+  const created = new Date(booking.created_at)
+  return Date.now() - created.getTime() < 60 * 60 * 1000
+}
+
 interface BookingsListProps {
   bookings: BookingRow[]
   counts: Record<string, number>
@@ -130,6 +136,7 @@ export function BookingsList({ bookings, counts, currentFilter, selectedId: init
         <div className="space-y-2">
           {bookings.map((b) => {
             const stale = isStaleInquiry(b)
+            const isNew = isNewInquiry(b)
             const isExpanded = expandedId === b.id
             const daysUntilPickup = differenceInCalendarDays(new Date(b.start_at), new Date())
 
@@ -156,6 +163,11 @@ export function BookingsList({ bookings, counts, currentFilter, selectedId: init
                         {b.transfer_requested && (
                           <span className="rounded-sm border border-gold/60 px-1.5 py-0.5 text-[9px] font-sans uppercase tracking-wider text-gold">
                             Transfer
+                          </span>
+                        )}
+                        {isNew && (
+                          <span className="rounded-sm bg-gold/20 border border-gold/40 px-1.5 py-0.5 text-[9px] font-sans uppercase tracking-wider text-gold">
+                            New
                           </span>
                         )}
                         {b.source === 'manual' && (

@@ -1,7 +1,7 @@
 'use client'
 
 import { MessageCircle } from 'lucide-react'
-import { buildWhatsAppLink } from '@/lib/whatsapp'
+import { buildWhatsAppLink, isWhatsAppConfigured } from '@/lib/whatsapp'
 
 interface WhatsAppButtonProps {
   message?: string
@@ -9,7 +9,7 @@ interface WhatsAppButtonProps {
 }
 
 export function WhatsAppButton({ message, className }: WhatsAppButtonProps) {
-  if (!process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP) return null
+  if (!isWhatsAppConfigured()) return null
 
   const href = buildWhatsAppLink(message)
 

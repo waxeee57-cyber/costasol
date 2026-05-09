@@ -1,4 +1,5 @@
 import { CarCard } from './CarCard'
+import { buildWhatsAppLink, isWhatsAppConfigured } from '@/lib/whatsapp'
 
 interface Car {
   slug: string
@@ -28,14 +29,16 @@ export function FleetGrid({ cars, startDate, endDate, pickupLocation, emptyMessa
         <p className="font-sans text-muted">
           {emptyMessage ?? 'No cars available for these dates.'}
         </p>
-        <a
-          href={`https://wa.me/${process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP ?? ''}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm font-sans text-gold underline-offset-4 hover:underline"
-        >
-          Message us on WhatsApp to discuss alternatives
-        </a>
+        {isWhatsAppConfigured() && (
+          <a
+            href={buildWhatsAppLink('Hi, I\'d like to discuss car availability.')}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-sans text-gold underline-offset-4 hover:underline"
+          >
+            Message us on WhatsApp to discuss alternatives
+          </a>
+        )}
       </div>
     )
   }
