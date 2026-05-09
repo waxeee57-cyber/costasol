@@ -13,7 +13,7 @@ export function TrustStrip() {
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           {items.map(({ icon: Icon, label, desc }) => (
-            <div key={label} className="flex flex-col gap-3 text-center md:text-left">
+            <div key={label} className="flex flex-col gap-3 text-center md:text-left trust-item rounded-lg p-4">
               <Icon className="mx-auto h-5 w-5 text-gold md:mx-0" />
               <div>
                 <p className="font-sans text-xs uppercase tracking-[0.15em] text-gold">{label}</p>

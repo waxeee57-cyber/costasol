@@ -41,7 +41,7 @@ export function CarCard({ car, startDate, endDate, pickupLocation }: CarCardProp
 
   return (
     <Link href={href} className="group block">
-      <div className="rounded-lg border border-border bg-graphite overflow-hidden transition-all duration-200 hover:border-gold/30">
+      <div className="rounded-lg border border-border bg-graphite overflow-hidden card-3d">
         {/* Image */}
         <div className="relative aspect-[16/9] overflow-hidden bg-black">
           {photo ? (
@@ -49,7 +49,7 @@ export function CarCard({ car, startDate, endDate, pickupLocation }: CarCardProp
               src={photo.url}
               alt={photo.alt}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              className="object-cover img-zoom"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           ) : (

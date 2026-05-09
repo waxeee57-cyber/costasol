@@ -109,3 +109,150 @@ html {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* ─── Accessibility: reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Effect keyframes ─── */
+
+@keyframes logoReveal {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes stepReveal {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes accordionOpen {
+  from { transform: scaleY(0.96) translateY(-4px); opacity: 0; }
+  to   { transform: scaleY(1)    translateY(0);    opacity: 1; }
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ─── Named utilities ─── */
+
+.animate-logo-reveal {
+  animation: logoReveal 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.animate-page-enter {
+  animation: pageEnter 0.4s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* ─── Effect 1: Fleet cards — 3D lift ─── */
+
+.card-3d {
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              border-color 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (hover: hover) {
+  .card-3d:hover {
+    will-change: transform;
+    transform: translateY(-8px) rotateX(2deg);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4),
+                0 8px 16px rgba(200, 169, 107, 0.1);
+    border-color: rgba(200, 169, 107, 0.3);
+  }
+}
+
+@media (hover: none) {
+  .card-3d:active {
+    transform: scale(1.02);
+    transition-duration: 0.1s;
+  }
+}
+
+/* Image inside card zooms on parent hover */
+.img-zoom {
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (hover: hover) {
+  .group:hover .img-zoom {
+    transform: scale(1.04);
+  }
+}
+
+/* ─── Effect 2: Trust strip — float on hover ─── */
+
+.trust-item {
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (hover: hover) {
+  .trust-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ─── Effect 3: Step number — staggered reveal on load ─── */
+
+.step-reveal {
+  animation: stepReveal 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation-delay: calc(var(--step-index, 0) * 0.15s + 0.8s);
+}
+
+/* ─── Effect 5: Button — 3D press ─── */
+/* Replaces transition-colors so all transitions listed explicitly */
+
+.btn-3d {
+  transition: color 0.2s ease,
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              opacity 0.2s ease,
+              transform 0.15s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (hover: hover) {
+  .btn-3d:hover {
+    will-change: transform;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 169, 107, 0.3);
+  }
+}
+
+.btn-3d:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(200, 169, 107, 0.2);
+}
+
+/* ─── Effect 6: Car detail gallery — perspective depth ─── */
+
+.gallery-3d {
+  perspective: 1200px;
+}
+
+.gallery-3d-img {
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (hover: hover) {
+  .gallery-3d:hover .gallery-3d-img {
+    will-change: transform;
+    transform: rotateY(-2deg) scale(1.01);
+  }
+}
+
+/* ─── Effect 7: Accordion content — slide-reveal ─── */
+
+[data-state=open] .accordion-inner {
+  animation: accordionOpen 0.3s cubic-bezier(0.23, 1, 0.32, 1) 0.05s both;
+}

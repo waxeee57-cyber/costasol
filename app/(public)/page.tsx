@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 
 export const metadata: Metadata = {
   description: 'Luxury car rental along the Costa del Sol. Personally confirmed reservations, hotel delivery, no hidden fees.',
@@ -150,9 +151,12 @@ export default async function HomePage() {
               { step: '02', title: 'Request', desc: 'Submit your inquiry through the site or WhatsApp. Takes 60 seconds.' },
               { step: '03', title: 'Personal confirmation', desc: 'We confirm personally, usually within the hour during business hours. You will always hear from us before your pickup.' },
               { step: '04', title: 'Drive', desc: 'We deliver the car to your hotel. Payment and paperwork at pickup.' },
-            ].map(({ step, title, desc }) => (
+            ].map(({ step, title, desc }, index) => (
               <div key={step} className="flex flex-col gap-4">
-                <span className="font-sans text-sm font-medium text-gold">{step}</span>
+                <span
+                  className="font-sans text-sm font-medium text-gold step-reveal"
+                  style={{ '--step-index': index } as unknown as CSSProperties}
+                >{step}</span>
                 <h3 className="font-display text-2xl font-medium text-white">{title}</h3>
                 <p className="font-sans text-sm leading-relaxed text-muted">{desc}</p>
               </div>

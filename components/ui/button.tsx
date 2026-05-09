@@ -6,14 +6,14 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 font-sans text-sm font-medium uppercase tracking-widest transition-colors duration-200 disabled:pointer-events-none disabled:opacity-40 cursor-pointer min-h-[48px]',
+  'inline-flex items-center justify-center gap-2 font-sans text-sm font-medium uppercase tracking-widest disabled:pointer-events-none disabled:opacity-40 cursor-pointer min-h-[48px]',
   {
     variants: {
       variant: {
         primary:
-          'bg-gold text-black hover:bg-gold-hover rounded-md px-8 py-4',
+          'bg-gold text-black hover:bg-gold-hover rounded-md px-8 py-4 btn-3d',
         secondary:
-          'border border-gold text-gold bg-transparent hover:bg-gold hover:text-black rounded-md px-8 py-4',
+          'border border-gold text-gold bg-transparent hover:bg-gold hover:text-black rounded-md px-8 py-4 btn-3d',
         whatsapp:
           'bg-whatsapp text-white hover:opacity-90 rounded-md px-8 py-4',
         ghost:

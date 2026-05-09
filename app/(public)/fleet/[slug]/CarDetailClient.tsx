@@ -139,7 +139,7 @@ export function CarDetailClient({
       <div className="min-h-screen bg-black pb-24 md:pb-0">
         {/* Gallery */}
         <div
-          className="relative h-[50vh] min-h-[320px] max-h-[520px] bg-graphite"
+          className="relative h-[50vh] min-h-[320px] max-h-[520px] bg-graphite gallery-3d"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -148,7 +148,7 @@ export function CarDetailClient({
               src={currentPhoto.url}
               alt={currentPhoto.alt}
               fill
-              className="object-cover"
+              className="object-cover gallery-3d-img"
               priority
               sizes="100vw"
             />
