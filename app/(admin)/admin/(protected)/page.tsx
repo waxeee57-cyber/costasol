@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { supabaseAdmin } from '@/lib/supabase'
 import { formatPrice } from '@/lib/formatters'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -37,53 +38,42 @@ async function getDashboardStats() {
 export default async function AdminDashboardPage() {
   const stats = await getDashboardStats()
 
-  const cards = [
-    {
-      label: 'Open inquiries',
-      value: String(stats.inquiries),
-      href: '/admin/bookings?filter=inquiries',
-      highlight: stats.inquiries > 0,
-    },
-    {
-      label: 'Active rentals',
-      value: String(stats.active),
-      href: '/admin/bookings?filter=active',
-      highlight: false,
-    },
-    {
-      label: 'Upcoming pickups',
-      value: String(stats.upcoming),
-      href: '/admin/bookings?filter=upcoming',
-      highlight: false,
-    },
-    {
-      label: 'Revenue this month',
-      value: formatPrice(stats.monthlyRevenue),
-      href: '/admin/bookings?filter=all',
-      highlight: false,
-    },
-  ]
-
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       <h1 className="font-display text-2xl font-medium text-white mb-6">Dashboard</h1>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {cards.map(({ label, value, href, highlight }) => (
-          <Link
-            key={label}
-            href={href}
-            className="rounded-md border border-border bg-graphite p-4 hover:border-gold/30 transition-colors"
-          >
-            <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-muted mb-2">{label}</p>
-            <p className={`font-display text-3xl font-light ${highlight ? 'text-gold' : 'text-white'}`}>
-              {value}
-            </p>
-          </Link>
-        ))}
+      {/* Urgent: shown only when action is needed */}
+      {stats.inquiries > 0 && (
+        <Link
+          href="/admin/bookings?filter=inquiries"
+          className="flex items-center justify-between mb-6 rounded-md border border-gold/40 bg-gold/5 px-4 py-3.5 hover:border-gold/60 transition-colors"
+        >
+          <p className="font-sans text-sm text-white">
+            <span className="text-gold font-medium">{stats.inquiries}</span>
+            {' '}{stats.inquiries === 1 ? 'inquiry' : 'inquiries'} waiting for a response
+          </p>
+          <ArrowRight className="h-4 w-4 text-gold shrink-0" />
+        </Link>
+      )}
+
+      {/* Context stats — compact strip, no cards */}
+      <div className="flex items-stretch divide-x divide-border mb-8">
+        <Link href="/admin/bookings?filter=active" className="pr-6 group">
+          <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted mb-1.5">Active</p>
+          <p className="font-sans text-xl font-medium text-white group-hover:text-gold transition-colors">{stats.active}</p>
+        </Link>
+        <Link href="/admin/bookings?filter=upcoming" className="px-6 group">
+          <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted mb-1.5">Upcoming</p>
+          <p className="font-sans text-xl font-medium text-white group-hover:text-gold transition-colors">{stats.upcoming}</p>
+        </Link>
+        <div className="pl-6">
+          <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted mb-1.5">This month</p>
+          <p className="font-sans text-xl font-medium text-white tabular-nums">{formatPrice(stats.monthlyRevenue)}</p>
+        </div>
       </div>
 
-      <div className="mt-8 flex flex-col gap-2 sm:flex-row">
+      {/* Quick links */}
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Link
           href="/admin/bookings"
           className="flex items-center justify-center rounded-md border border-gold/40 px-4 py-2.5 text-xs font-sans uppercase tracking-[0.15em] text-gold hover:bg-gold hover:text-black transition-colors"
