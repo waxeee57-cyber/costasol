@@ -23,6 +23,11 @@ export async function sendEmail({
   html: string
   replyTo?: string
 }): Promise<{ success: boolean; error?: string }> {
+  console.log('[Resend] Attempting to send email to:', to)
+  console.log('[Resend] From:', FROM)
+  console.log('[Resend] API key configured:', !!process.env.RESEND_API_KEY)
+  console.log('[Resend] Admin email:', process.env.ADMIN_EMAIL)
+
   if (!resend) {
     console.log('[Resend] No API key — email not sent:', { to, subject })
     return { success: false, error: 'No API key configured' }
