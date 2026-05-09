@@ -1,4 +1,7 @@
+import { formatInTimeZone } from 'date-fns-tz'
+import { parseISO } from 'date-fns'
 import { sendEmail, ADMIN_EMAIL } from '@/lib/resend'
+import { TZ } from '@/lib/formatters'
 import {
   inquiryConfirmationEmail,
   inquiryAdminAlertEmail,
@@ -7,10 +10,19 @@ import {
   bookingCancelledEmail,
 } from '@/lib/email/templates'
 
+function fn(fullName: string): string {
+  return fullName.split(' ')[0] || fullName
+}
+
+function shortDate(isoStr: string): string {
+  return formatInTimeZone(parseISO(isoStr), TZ, 'EEE d MMM')
+}
+
 export async function sendInquiryEmails(data: {
   customerName: string
   customerEmail: string
   customerPhone?: string
+  customerCountry?: string
   carLabel: string
   startAt: string
   endAt: string
@@ -28,15 +40,15 @@ export async function sendInquiryEmails(data: {
   const [customerResult, adminResult] = await Promise.allSettled([
     sendEmail({
       to: data.customerEmail,
-      subject: `Reservation request received — ${data.bookingCode}`,
+      subject: `We've got your request, ${fn(data.customerName)} — ${data.bookingCode}`,
       html: inquiryConfirmationEmail(data),
       replyTo: ADMIN_EMAIL,
     }),
     sendEmail({
       to: ADMIN_EMAIL,
       subject: data.transferRequested
-        ? `⚠ New inquiry (transfer) — ${data.bookingCode} — ${data.carLabel}`
-        : `New inquiry — ${data.bookingCode} — ${data.carLabel}`,
+        ? `⚠ New request (transfer) — ${data.carLabel} · ${data.bookingCode}`
+        : `New request — ${data.carLabel} · ${shortDate(data.startAt)} · ${data.bookingCode}`,
       html: inquiryAdminAlertEmail(data),
     }),
   ])
@@ -69,13 +81,13 @@ export async function sendConfirmationEmails(data: {
   const [customerResult, adminResult] = await Promise.allSettled([
     sendEmail({
       to: data.customerEmail,
-      subject: `Your reservation is confirmed — ${data.bookingCode}`,
+      subject: `You're confirmed, ${fn(data.customerName)} — see you on ${shortDate(data.startAt)}`,
       html: bookingConfirmedEmail(data),
       replyTo: ADMIN_EMAIL,
     }),
     sendEmail({
       to: ADMIN_EMAIL,
-      subject: `Confirmed — ${data.bookingCode} — ${data.carLabel}`,
+      subject: `Confirmed — ${data.bookingCode} · ${fn(data.customerName)} · ${shortDate(data.startAt)}`,
       html: bookingConfirmedAdminEmail(data),
     }),
   ])

@@ -136,6 +136,7 @@ export async function POST(req: NextRequest) {
     customerName: full_name,
     customerEmail: email,
     customerPhone: phone,
+    customerCountry: country,
     carLabel: `${car.brand} ${car.model} ${car.year}`,
     startAt: startUtc,
     endAt: endUtc,

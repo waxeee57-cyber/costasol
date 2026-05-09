@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
     customerName: full_name,
     customerEmail: email,
     customerPhone: phone,
+    customerCountry: country ?? undefined,
     carLabel,
     startAt: startUtc,
     endAt: endUtc,
