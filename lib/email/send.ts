@@ -4,6 +4,7 @@ import {
   inquiryAdminAlertEmail,
   bookingConfirmedEmail,
   bookingConfirmedAdminEmail,
+  bookingCancelledEmail,
 } from '@/lib/email/templates'
 
 export async function sendInquiryEmails(data: {
@@ -82,5 +83,27 @@ export async function sendConfirmationEmails(data: {
   }
   if (adminResult.status === 'rejected') {
     console.error('[Email] Admin confirmation alert failed:', adminResult.reason)
+  }
+}
+
+export async function sendCancellationEmail(data: {
+  customerName: string
+  customerEmail: string
+  carLabel: string
+  startAt: string
+  endAt: string
+  bookingCode: string
+}) {
+  const result = await Promise.allSettled([
+    sendEmail({
+      to: data.customerEmail,
+      subject: `Your reservation has been cancelled — ${data.bookingCode}`,
+      html: bookingCancelledEmail(data),
+      replyTo: ADMIN_EMAIL,
+    }),
+  ])
+
+  if (result[0].status === 'rejected') {
+    console.error('[Email] Customer cancellation email failed:', result[0].reason)
   }
 }

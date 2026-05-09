@@ -317,6 +317,40 @@ ${button('View Reservation', `${SITE_URL}/booking/${data.bookingCode}`)}
   return layout(content)
 }
 
+// ─── TEMPLATE 5: Customer booking cancelled ──────────────────────────────
+
+export function bookingCancelledEmail(data: {
+  customerName: string
+  carLabel: string
+  startAt: string
+  endAt: string
+  bookingCode: string
+}): string {
+  const content = `
+<h1 style="margin:0 0 8px;font-size:24px;color:${TEXT_DARK};font-weight:700;">
+  Your reservation has been cancelled.
+</h1>
+<p style="margin:0 0 24px;font-size:15px;color:${TEXT_GREY};line-height:1.6;">
+  Dear ${data.customerName}, your reservation for the ${data.carLabel}
+  from ${formatDate(data.startAt)} to ${formatDate(data.endAt)}
+  (reference: <strong>${data.bookingCode}</strong>) has been cancelled.
+</p>
+
+${divider}
+
+<p style="margin:0 0 16px;font-size:14px;color:${TEXT_DARK};line-height:1.6;">
+  If you have any questions or would like to make a new reservation,
+  please contact us directly —
+  ${getWhatsAppLink()
+    ? `<a href="${getWhatsAppLink()}" style="color:${BRAND_GOLD};text-decoration:none;">WhatsApp</a> or `
+    : ''}
+  <a href="mailto:rent@drivecostasol.com"
+    style="color:${BRAND_GOLD};text-decoration:none;">rent@drivecostasol.com</a>.
+</p>`
+
+  return layout(content)
+}
+
 // ─── TEMPLATE 4: Admin booking confirmed alert ────────────────────────────
 
 export function bookingConfirmedAdminEmail(data: {
