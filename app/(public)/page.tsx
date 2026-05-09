@@ -63,8 +63,8 @@ export default async function HomePage() {
           </h1>
 
           <p className="max-w-md font-sans text-base leading-relaxed text-muted">
-            Luxury car rental in Marbella and the Costa del Sol.
-            Concierge delivery, personally confirmed reservations.
+            Luxury car rental along the Costa del Sol. Every reservation
+            personally confirmed. Every car delivered to your door.
           </p>
 
           {/* HeroSearch */}

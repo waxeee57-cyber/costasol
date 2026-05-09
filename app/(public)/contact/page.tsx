@@ -43,6 +43,7 @@ export default function ContactPage() {
                     {email}
                   </a>
                   <p className="font-sans text-xs text-muted mt-0.5">Tap to copy or open your mail app</p>
+                  <p className="font-sans text-xs text-muted mt-1">We reply within 2 hours during business hours (9:00–20:00 CET).</p>
                 </div>
               </div>
 

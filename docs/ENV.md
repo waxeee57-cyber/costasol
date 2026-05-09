@@ -20,6 +20,10 @@ Copy `.env.example` to `.env.local` for local development.
 | `NEXT_PUBLIC_BUSINESS_WHATSAPP` | Yes (launch) | WhatsApp number without +, e.g. `34600000000` |
 | `MAINTENANCE_MODE` | No | Set to `true` to show maintenance page on all public routes |
 
+## Analytics
+
+Vercel Analytics is enabled by default — view dashboards in your Vercel project under the Analytics tab. No additional configuration required.
+
 ## Graceful degradation (dev)
 
 - `RESEND_API_KEY=dev` → skips Resend calls, logs to console

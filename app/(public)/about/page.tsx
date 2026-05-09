@@ -1,10 +1,11 @@
-import { buildWhatsAppLink } from '@/lib/whatsapp'
+import { buildWhatsAppLink, isWhatsAppConfigured } from '@/lib/whatsapp'
 import { MessageCircle } from 'lucide-react'
 
 export const metadata = { title: 'About' }
 
 export default function AboutPage() {
-  const whatsappHref = buildWhatsAppLink('Hi, I have a question before booking.')
+  const waConfigured = isWhatsAppConfigured()
+  const whatsappHref = buildWhatsAppLink('Hi, I have a question about renting a car with CostaSol.')
   return (
     <div className="min-h-screen bg-black py-24">
       <div className="mx-auto max-w-3xl px-6">
@@ -32,17 +33,19 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="mt-10">
-          <a
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 rounded-md bg-whatsapp px-6 py-3 font-sans text-sm font-medium text-white hover:opacity-90 transition-opacity"
-          >
-            <MessageCircle className="h-4 w-4 fill-white stroke-none" />
-            Message us on WhatsApp
-          </a>
-        </div>
+        {waConfigured && (
+          <div className="mt-10">
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 rounded-md bg-whatsapp px-6 py-3 font-sans text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            >
+              <MessageCircle className="h-4 w-4 fill-white stroke-none" />
+              Message us on WhatsApp
+            </a>
+          </div>
+        )}
       </div>
     </div>
   )
