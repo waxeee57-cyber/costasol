@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { getSession } from '@/lib/supabase-server'
 import { generateBookingCode } from '@/lib/booking-code'
-import { formatDate, formatPriceDecimals, isFutureOrToday, TZ } from '@/lib/formatters'
-import { notifyInquiry } from '@/lib/n8n'
+import { isFutureOrToday, TZ } from '@/lib/formatters'
+import { sendInquiryEmails, sendConfirmationEmails } from '@/lib/email/send'
 import { z } from 'zod'
 import { formatInTimeZone } from 'date-fns-tz'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
@@ -108,24 +108,27 @@ export async function POST(req: NextRequest) {
 
   if (!inserted) return NextResponse.json({ error: 'Booking code collision' }, { status: 500 })
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const statusPageUrl = `${siteUrl}/booking/${booking_code}?email=${encodeURIComponent(email)}`
-
-  notifyInquiry({
-    event: initial_status,
-    booking_code,
-    customer_name: full_name,
-    customer_email: email,
-    customer_phone: phone ?? '',
-    customer_message: '',
-    car_label: `${car.brand} ${car.model} ${car.year}`,
-    dates_label: `${formatDate(startDate)} → ${formatDate(endDate)}`,
+  const carLabel = `${car.brand} ${car.model} ${car.year}`
+  const emailBase = {
+    customerName: full_name,
+    customerEmail: email,
+    customerPhone: phone,
+    carLabel,
+    startAt: startUtc,
+    endAt: endUtc,
     days,
-    pickup_label: `${pickup_location} · ${pickup_time}`,
-    estimated_total: formatPriceDecimals(total),
-    deposit: formatPriceDecimals(car.deposit_eur),
-    status_page_url: statusPageUrl,
-  }).catch((err) => console.warn('[manual] n8n notify failed', err))
+    pickupLocation: pickup_location,
+    pickupTime: pickup_time,
+    totalEur: total,
+    depositEur: car.deposit_eur,
+    bookingCode: booking_code,
+  }
+
+  if (initial_status === 'inquiry') {
+    sendInquiryEmails(emailBase).catch((err) => console.error('[Email] manual sendInquiryEmails threw:', err))
+  } else {
+    sendConfirmationEmails(emailBase).catch((err) => console.error('[Email] manual sendConfirmationEmails threw:', err))
+  }
 
   return NextResponse.json({ booking_code })
 }

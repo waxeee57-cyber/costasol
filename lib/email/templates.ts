@@ -4,7 +4,7 @@ const BRAND_GOLD = '#C8A96B'
 const BRAND_DARK = '#0F0F10'
 const TEXT_DARK = '#181818'
 const TEXT_GREY = '#666666'
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://costasol.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://drivecostasol.com'
 
 function getWhatsAppLink(): string | null {
   const num = process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP

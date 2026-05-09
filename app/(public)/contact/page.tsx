@@ -19,7 +19,7 @@ const PICKUP_LOCATIONS = [
 ]
 
 export default function ContactPage() {
-  const email = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? 'rent@drivecostasol.com'
+  const email = process.env.ADMIN_EMAIL ?? 'rent@drivecostasol.com'
   const phone = process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? ''
   const waConfigured = isWhatsAppConfigured()
 

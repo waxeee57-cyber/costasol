@@ -23,7 +23,7 @@ export async function GET() {
   // n8n webhook URL configured
   checks.n8n_url_configured = !!process.env.N8N_WEBHOOK_URL
 
-  const allOk = Object.values(checks).every((v) => v === true)
+  const allOk = checks.supabase === true && checks.resend === true
 
   return NextResponse.json(
     { ok: allOk, checks, ts: new Date().toISOString() },
