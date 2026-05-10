@@ -1,0 +1,26 @@
+import { getAuthUser } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase'
+import { NextResponse } from 'next/server'
+
+export async function requireAdmin(): Promise<
+  { user: { id: string; email: string } } |
+  { error: NextResponse }
+> {
+  const user = await getAuthUser()
+  if (!user) {
+    return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
+  }
+
+  // CostaSol: admin_users.id IS the auth user id (no separate user_id column)
+  const { data: adminUser, error } = await supabaseAdmin
+    .from('admin_users')
+    .select('id, role')
+    .eq('id', user.id)
+    .single()
+
+  if (error || !adminUser) {
+    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) }
+  }
+
+  return { user: { id: user.id, email: user.email ?? '' } }
+}

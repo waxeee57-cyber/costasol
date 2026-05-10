@@ -9,7 +9,8 @@ import { Users, Zap, Fuel, Gauge, User, IdCard, AlertTriangle, MessageCircle, Ch
 import { DateRangePicker } from '@/components/booking/DateRangePicker'
 import { CostBreakdown } from '@/components/booking/CostBreakdown'
 import { MobileStickyCTA } from '@/components/booking/MobileStickyCTA'
-import { InquiryDrawer } from '@/components/booking/InquiryDrawer'
+import dynamic from 'next/dynamic'
+const InquiryDrawer = dynamic(() => import('@/components/booking/InquiryDrawer').then((m) => m.InquiryDrawer), { ssr: false })
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatPrice } from '@/lib/formatters'

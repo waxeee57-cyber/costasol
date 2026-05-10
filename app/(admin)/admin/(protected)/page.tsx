@@ -10,8 +10,9 @@ import { TZ } from '@/lib/formatters'
 async function getDashboardStats() {
   const todayMadrid = formatInTimeZone(new Date(), TZ, 'yyyy-MM-dd')
   const monthStart = formatInTimeZone(new Date(), TZ, 'yyyy-MM-01')
+  const sixtyDaysOut = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
 
-  const [inquiries, active, upcoming, revenue] = await Promise.all([
+  const [inquiries, active, upcoming, revenue, expiringVehicleDocs, unverifiedCustomerDocs] = await Promise.all([
     supabaseAdmin.from('bookings').select('id', { count: 'exact', head: true }).eq('status', 'inquiry'),
     supabaseAdmin.from('bookings').select('id', { count: 'exact', head: true }).eq('status', 'picked_up'),
     supabaseAdmin.from('bookings').select('id', { count: 'exact', head: true })
@@ -20,6 +21,10 @@ async function getDashboardStats() {
     supabaseAdmin.from('bookings').select('total_eur')
       .in('status', ['confirmed', 'picked_up', 'returned', 'completed'])
       .gte('created_at', `${monthStart}T00:00:00+00:00`),
+    supabaseAdmin.from('vehicle_documents').select('id, expires_at', { count: 'exact', head: false })
+      .not('expires_at', 'is', null)
+      .lte('expires_at', sixtyDaysOut),
+    supabaseAdmin.from('customer_documents').select('id', { count: 'exact', head: true }).eq('verified', false),
   ])
 
   const monthlyRevenue = (revenue.data ?? []).reduce(
@@ -27,11 +32,19 @@ async function getDashboardStats() {
     0
   )
 
+  const today = new Date().toISOString().slice(0, 10)
+  const vehicleDocList = (expiringVehicleDocs.data ?? []) as Array<{ id: string; expires_at: string }>
+  const expiredVehicleDocs = vehicleDocList.filter((d) => d.expires_at < today).length
+  const soonVehicleDocs = vehicleDocList.filter((d) => d.expires_at >= today).length
+
   return {
     inquiries: inquiries.count ?? 0,
     active: active.count ?? 0,
     upcoming: upcoming.count ?? 0,
     monthlyRevenue,
+    expiredVehicleDocs,
+    soonVehicleDocs,
+    unverifiedCustomerDocs: unverifiedCustomerDocs.count ?? 0,
   }
 }
 
@@ -87,6 +100,42 @@ export default async function AdminDashboardPage() {
           Manage fleet
         </Link>
       </div>
+
+      {/* Documents widget — only when actionable */}
+      {(stats.expiredVehicleDocs > 0 || stats.soonVehicleDocs > 0 || stats.unverifiedCustomerDocs > 0) && (
+        <div className="mt-8 rounded-md border border-warning/30 bg-warning/5 px-4 py-4">
+          <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-warning mb-3">Documents needing attention</p>
+          <div className="space-y-2">
+            {stats.expiredVehicleDocs > 0 && (
+              <Link href="/admin/cars" className="flex items-center justify-between group">
+                <p className="font-sans text-sm text-white group-hover:text-gold transition-colors">
+                  <span className="text-danger font-medium">{stats.expiredVehicleDocs}</span>{' '}
+                  vehicle {stats.expiredVehicleDocs === 1 ? 'document' : 'documents'} expired
+                </p>
+                <ArrowRight className="h-3.5 w-3.5 text-muted group-hover:text-gold transition-colors" />
+              </Link>
+            )}
+            {stats.soonVehicleDocs > 0 && (
+              <Link href="/admin/cars" className="flex items-center justify-between group">
+                <p className="font-sans text-sm text-white group-hover:text-gold transition-colors">
+                  <span className="text-warning font-medium">{stats.soonVehicleDocs}</span>{' '}
+                  vehicle {stats.soonVehicleDocs === 1 ? 'document' : 'documents'} expiring within 60 days
+                </p>
+                <ArrowRight className="h-3.5 w-3.5 text-muted group-hover:text-gold transition-colors" />
+              </Link>
+            )}
+            {stats.unverifiedCustomerDocs > 0 && (
+              <Link href="/admin/bookings" className="flex items-center justify-between group">
+                <p className="font-sans text-sm text-white group-hover:text-gold transition-colors">
+                  <span className="text-warning font-medium">{stats.unverifiedCustomerDocs}</span>{' '}
+                  customer {stats.unverifiedCustomerDocs === 1 ? 'document' : 'documents'} unverified
+                </p>
+                <ArrowRight className="h-3.5 w-3.5 text-muted group-hover:text-gold transition-colors" />
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
